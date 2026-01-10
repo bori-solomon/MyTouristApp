@@ -2,11 +2,11 @@
 
 import { Destination, DriveFile } from "@/types";
 import { useState } from "react";
-import { FileText, Image as ImageIcon, Plus, ExternalLink, Loader2, Trash2 } from "lucide-react";
+import { FileText, Image as ImageIcon, Plus, ExternalLink, Loader2, Trash2, LayoutGrid, List, Edit2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { FileUploader } from "./FileUploader";
 import { AttractionList } from "./AttractionList";
-import { addNewAttraction, addNewCategory, deleteAttraction, uploadFileAction, deleteFileAction } from "@/app/actions";
+import { addNewAttraction, addNewCategory, deleteAttraction, uploadFileAction, deleteFileAction, renameFileAction } from "@/app/actions";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 interface DestinationViewProps {
@@ -15,12 +15,22 @@ interface DestinationViewProps {
 
 export function DestinationView({ destination }: DestinationViewProps) {
     const { dict } = useLanguage();
-    const [activeCategoryId, setActiveCategoryId] = useState<string>(
-        destination.categories[0]?.id || ""
-    );
+
+    // Find initial category based on visual order: Visa/Docs -> Air Tickets -> Hotels -> Transport -> Attractions
+    const getInitialCategory = () => {
+        const order = ["Visa/Docs", "Air Tickets", "Hotels", "Transport"];
+        for (const name of order) {
+            const cat = destination.categories.find(c => c.name === name);
+            if (cat) return cat.id;
+        }
+        return "attractions";
+    };
+
+    const [activeCategoryId, setActiveCategoryId] = useState<string>(getInitialCategory());
     const [isAddingCategory, setIsAddingCategory] = useState(false);
     const [newCategoryName, setNewCategoryName] = useState("");
     const [isUploading, setIsUploading] = useState(false);
+    const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
     const activeCategory = destination.categories.find(c => c.id === activeCategoryId);
 
@@ -65,30 +75,42 @@ export function DestinationView({ destination }: DestinationViewProps) {
         }
     };
 
+    const handleRenameFile = async (fileId: string, currentName: string) => {
+        if (!activeCategoryId) return;
+        const newName = prompt("Enter new name:", currentName);
+        if (newName && newName !== currentName) {
+            await renameFileAction(destination.id, activeCategoryId, fileId, newName);
+        }
+    };
+
     return (
         <div className="space-y-6">
             {/* Tabs */}
             <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide">
-                {destination.categories.map(cat => (
-                    <button
-                        key={cat.id}
-                        onClick={() => setActiveCategoryId(cat.id)}
-                        className={cn(
-                            "px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors",
-                            activeCategoryId === cat.id
-                                ? "bg-primary text-primary-foreground"
-                                : "bg-muted text-muted-foreground hover:bg-muted/80"
-                        )}
-                    >
-                        {/* Map standard categories to translations if possible, else use name */}
-                        {cat.name === "Visa/Docs" ? dict.destination.tabs.visaDocs :
-                            cat.name === "Air Tickets" || cat.name === "Tickets" ? dict.destination.tabs.airTickets :
-                                cat.name === "Hotels" ? dict.destination.tabs.hotels :
-                                    cat.name === "Transport" || cat.name === "Cars" ? dict.destination.tabs.transport : cat.name}
-                    </button>
-                ))}
+                {/* 1. Main 4 Categories in specific order */}
+                {["Visa/Docs", "Air Tickets", "Hotels", "Transport"].map(name => {
+                    const cat = destination.categories.find(c => c.name === name);
+                    if (!cat) return null;
+                    return (
+                        <button
+                            key={cat.id}
+                            onClick={() => setActiveCategoryId(cat.id)}
+                            className={cn(
+                                "px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors",
+                                activeCategoryId === cat.id
+                                    ? "bg-primary text-primary-foreground"
+                                    : "bg-muted text-muted-foreground hover:bg-muted/80"
+                            )}
+                        >
+                            {cat.name === "Visa/Docs" ? dict.destination.tabs.visaDocs :
+                                cat.name === "Air Tickets" ? dict.destination.tabs.airTickets :
+                                    cat.name === "Hotels" ? dict.destination.tabs.hotels :
+                                        cat.name === "Transport" ? dict.destination.tabs.transport : cat.name}
+                        </button>
+                    );
+                })}
 
-                {/* Attractions Tab */}
+                {/* 2. Attractions Tab - requested after Transport */}
                 <button
                     onClick={() => setActiveCategoryId("attractions")}
                     className={cn(
@@ -101,7 +123,25 @@ export function DestinationView({ destination }: DestinationViewProps) {
                     {dict.destination.tabs.attractions}
                 </button>
 
-                {/* Add Category Button */}
+                {/* 3. Any Other Categories */}
+                {destination.categories
+                    .filter(cat => !["Visa/Docs", "Air Tickets", "Hotels", "Transport"].includes(cat.name))
+                    .map(cat => (
+                        <button
+                            key={cat.id}
+                            onClick={() => setActiveCategoryId(cat.id)}
+                            className={cn(
+                                "px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors",
+                                activeCategoryId === cat.id
+                                    ? "bg-primary text-primary-foreground"
+                                    : "bg-muted text-muted-foreground hover:bg-muted/80"
+                            )}
+                        >
+                            {cat.name}
+                        </button>
+                    ))}
+
+                {/* 4. Add Category Button */}
                 {isAddingCategory ? (
                     <form onSubmit={handleAddCategory} className="flex items-center gap-2">
                         <input
@@ -141,12 +181,36 @@ export function DestinationView({ destination }: DestinationViewProps) {
             ) : activeCategory ? (
                 <div className="bg-card border border-border rounded-2xl p-6 min-h-[400px]">
                     <div className="flex items-center justify-between mb-6">
-                        <h2 className="text-2xl font-bold">
-                            {activeCategory.name === "Visa/Docs" ? dict.destination.tabs.visaDocs :
-                                activeCategory.name === "Air Tickets" || activeCategory.name === "Tickets" ? dict.destination.tabs.airTickets :
-                                    activeCategory.name === "Hotels" ? dict.destination.tabs.hotels :
-                                        activeCategory.name === "Transport" || activeCategory.name === "Cars" ? dict.destination.tabs.transport : activeCategory.name}
-                        </h2>
+                        <div className="flex items-center gap-4">
+                            <h2 className="text-2xl font-bold">
+                                {activeCategory.name === "Visa/Docs" ? dict.destination.tabs.visaDocs :
+                                    activeCategory.name === "Air Tickets" ? dict.destination.tabs.airTickets :
+                                        activeCategory.name === "Hotels" ? dict.destination.tabs.hotels :
+                                            activeCategory.name === "Transport" ? dict.destination.tabs.transport : activeCategory.name}
+                            </h2>
+                            <div className="flex items-center gap-1 bg-muted/50 p-1 rounded-lg border border-border">
+                                <button
+                                    onClick={() => setViewMode("grid")}
+                                    className={cn(
+                                        "p-1.5 rounded-md transition-colors",
+                                        viewMode === "grid" ? "bg-background shadow-sm text-primary" : "text-muted-foreground hover:text-foreground"
+                                    )}
+                                    title="Grid View"
+                                >
+                                    <LayoutGrid className="w-4 h-4" />
+                                </button>
+                                <button
+                                    onClick={() => setViewMode("list")}
+                                    className={cn(
+                                        "p-1.5 rounded-md transition-colors",
+                                        viewMode === "list" ? "bg-background shadow-sm text-primary" : "text-muted-foreground hover:text-foreground"
+                                    )}
+                                    title="List View"
+                                >
+                                    <List className="w-4 h-4" />
+                                </button>
+                            </div>
+                        </div>
                         <span className="text-sm text-muted-foreground">{activeCategory.files.length} {dict.destination.documents}</span>
                     </div>
 
@@ -160,20 +224,47 @@ export function DestinationView({ destination }: DestinationViewProps) {
                         )}
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        {activeCategory.files.map(file => (
-                            <FileCard
-                                key={file.id}
-                                file={file}
-                                onDelete={() => handleDeleteFile(file.id)}
-                            />
-                        ))}
-                        {activeCategory.files.length === 0 && !isUploading && (
-                            <p className="col-span-full text-center text-muted-foreground py-8 italic">
-                                {dict.destination.noDocuments}
-                            </p>
-                        )}
-                    </div>
+                    {viewMode === "grid" ? (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                            {activeCategory.files.map(file => (
+                                <FileCard
+                                    key={file.id}
+                                    file={file}
+                                    onDelete={() => handleDeleteFile(file.id)}
+                                    onRename={() => handleRenameFile(file.id, file.name)}
+                                />
+                            ))}
+                            {activeCategory.files.length === 0 && !isUploading && (
+                                <p className="col-span-full text-center text-muted-foreground py-8 italic">
+                                    {dict.destination.noDocuments}
+                                </p>
+                            )}
+                        </div>
+                    ) : (
+                        <div className="flex flex-col gap-2">
+                            {activeCategory.files.length > 0 && (
+                                <div className="hidden sm:flex items-center gap-4 px-4 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider border-b border-border mb-2">
+                                    <div className="w-10">Icon</div>
+                                    <div className="flex-1">Name</div>
+                                    <div className="w-40">Date</div>
+                                    <div className="w-10"></div>
+                                </div>
+                            )}
+                            {activeCategory.files.map(file => (
+                                <FileListItem
+                                    key={file.id}
+                                    file={file}
+                                    onDelete={() => handleDeleteFile(file.id)}
+                                    onRename={() => handleRenameFile(file.id, file.name)}
+                                />
+                            ))}
+                            {activeCategory.files.length === 0 && !isUploading && (
+                                <p className="text-center text-muted-foreground py-8 italic">
+                                    {dict.destination.noDocuments}
+                                </p>
+                            )}
+                        </div>
+                    )}
                 </div>
             ) : (
                 <div className="text-center py-20 bg-card rounded-2xl border border-dashed text-muted-foreground">
@@ -184,7 +275,71 @@ export function DestinationView({ destination }: DestinationViewProps) {
     );
 }
 
-function FileCard({ file, onDelete }: { file: DriveFile; onDelete: () => void }) {
+function FileListItem({ file, onDelete, onRename }: { file: DriveFile; onDelete: () => void; onRename: () => void }) {
+    const { dict } = useLanguage();
+    const isImage = file.mimeType.startsWith("image/");
+
+    return (
+        <div className="group relative flex items-center gap-4 p-3 rounded-xl border border-border bg-muted/10 hover:bg-muted/30 transition-all">
+            <a
+                href={file.webViewLink || undefined}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => {
+                    if ((e.target as HTMLElement).closest('button')) {
+                        e.preventDefault();
+                        return;
+                    }
+                    if (!file.webViewLink) {
+                        e.preventDefault();
+                        alert("Mock Mode: File content is not available for download.");
+                    }
+                }}
+                className="flex flex-1 items-center gap-4 min-w-0"
+            >
+                <div className={cn(
+                    "p-2 rounded-lg flex-shrink-0",
+                    isImage ? "bg-purple-500/10 text-purple-500" : "bg-blue-500/10 text-blue-500"
+                )}>
+                    {isImage ? <ImageIcon className="w-4 h-4" /> : <FileText className="w-4 h-4" />}
+                </div>
+                <div className="flex-1 min-w-0">
+                    <p className="font-medium text-sm truncate group-hover:text-primary transition-colors">{file.name}</p>
+                </div>
+                <div className="hidden sm:block w-40 text-xs text-muted-foreground" suppressHydrationWarning>
+                    {file.createdTime ? new Date(file.createdTime).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' }) : dict.common.unknownDate}
+                </div>
+            </a>
+
+            <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                <button
+                    onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        onRename();
+                    }}
+                    className="p-1.5 rounded-md text-muted-foreground hover:bg-primary/10 hover:text-primary transition-colors"
+                    title="Rename"
+                >
+                    <Edit2 className="w-4 h-4" />
+                </button>
+                <button
+                    onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        onDelete();
+                    }}
+                    className="p-1.5 rounded-md text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors"
+                    title="Delete"
+                >
+                    <Trash2 className="w-4 h-4" />
+                </button>
+            </div>
+        </div>
+    );
+}
+
+function FileCard({ file, onDelete, onRename }: { file: DriveFile; onDelete: () => void; onRename: () => void }) {
     const isImage = file.mimeType.startsWith("image/");
 
 
@@ -227,8 +382,19 @@ function FileCard({ file, onDelete }: { file: DriveFile; onDelete: () => void })
                 </div>
             </a>
 
-            {/* Delete Button */}
-            <div className="absolute top-3 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+            {/* Action Buttons */}
+            <div className="absolute top-3 right-2 flex flex-col gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                <button
+                    onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        onRename();
+                    }}
+                    className="p-1.5 rounded-md text-muted-foreground hover:bg-primary/10 hover:text-primary transition-colors"
+                    title="Rename"
+                >
+                    <Edit2 className="w-4 h-4" />
+                </button>
                 <button
                     onClick={(e) => {
                         e.preventDefault();

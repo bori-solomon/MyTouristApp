@@ -6,6 +6,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { Locale } from "@/lib/dictionaries";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
+import { AuthButton } from "./AuthButton";
 
 export function Navbar() {
     const { locale, setLocale, dict } = useLanguage();
@@ -30,7 +31,8 @@ export function Navbar() {
                     </span>
                 </Link>
 
-                <div className="relative">
+                <div className="flex items-center gap-4">
+                    <AuthButton />
                     <button
                         onClick={() => setIsOpen(!isOpen)}
                         className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-muted transition-colors text-sm font-medium"

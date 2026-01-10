@@ -4,9 +4,11 @@ import { Destination } from "@/types";
 import { useState } from "react";
 import { DestinationCard } from "./DestinationCard";
 import { DestinationListItem } from "./DestinationListItem";
-import { LayoutGrid, List, ArrowUpDown, Plus } from "lucide-react";
+import { LayoutGrid, List, ArrowUpDown, Plus, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { createDestinationAction } from "@/app/actions";
+import { useRouter } from "next/navigation";
 
 interface DashboardViewProps {
     initialDestinations: Destination[];
@@ -19,6 +21,8 @@ export function DashboardView({ initialDestinations }: DashboardViewProps) {
     const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
     const [sortField, setSortField] = useState<SortField>("createdTime");
     const [sortOrder, setSortOrder] = useState<SortOrder>("desc");
+    const [isCreating, setIsCreating] = useState(false);
+    const router = useRouter();
 
     // Sort destinations
     const sortedDestinations = [...initialDestinations].sort((a, b) => {
@@ -53,6 +57,26 @@ export function DashboardView({ initialDestinations }: DashboardViewProps) {
         }
     };
 
+    const handleNewTrip = async () => {
+        const name = prompt("Enter destination name:");
+        if (!name || isCreating) return;
+
+        setIsCreating(true);
+        try {
+            const result = await createDestinationAction(name);
+            if (result.success && result.destinationId) {
+                router.push(`/destination/${result.destinationId}`);
+            } else {
+                alert(result.error || "Failed to create trip");
+            }
+        } catch (error) {
+            console.error("Error creating trip:", error);
+            alert("An unexpected error occurred");
+        } finally {
+            setIsCreating(false);
+        }
+    };
+
     return (
         <div className="space-y-6">
             <div className="flex items-center justify-between mb-2">
@@ -62,8 +86,16 @@ export function DashboardView({ initialDestinations }: DashboardViewProps) {
                         {dict.dashboard.subtitle}
                     </p>
                 </div>
-                <button className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground px-4 py-2 rounded-lg font-medium transition-colors">
-                    <Plus className="w-5 h-5" />
+                <button
+                    onClick={handleNewTrip}
+                    disabled={isCreating}
+                    className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground px-4 py-2 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                    {isCreating ? (
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                    ) : (
+                        <Plus className="w-5 h-5" />
+                    )}
                     <span>{dict.dashboard.newTrip}</span>
                 </button>
             </div>

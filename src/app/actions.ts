@@ -1,6 +1,6 @@
 "use server";
 
-import { addAttraction, createCategory, removeAttraction, uploadFile, deleteFile, updateDestination } from "@/lib/driveService";
+import { addAttraction, createCategory, removeAttraction, uploadFile, deleteFile, updateDestination, createDestination, renameFile } from "@/lib/driveService";
 import { revalidatePath } from "next/cache";
 
 export async function addNewCategory(destId: string, name: string) {
@@ -72,5 +72,27 @@ export async function deleteFileAction(destId: string, categoryId: string, fileI
     } catch (error) {
         console.error("Failed to delete file:", error);
         return { success: false, error: "Failed to delete file" };
+    }
+}
+
+export async function createDestinationAction(name: string) {
+    try {
+        const newDest = await createDestination(name);
+        revalidatePath("/");
+        return { success: true, destinationId: newDest.id };
+    } catch (error) {
+        console.error("Failed to create destination:", error);
+        return { success: false, error: "Failed to create destination" };
+    }
+}
+
+export async function renameFileAction(destId: string, categoryId: string, fileId: string, newName: string) {
+    try {
+        await renameFile(destId, categoryId, fileId, newName);
+        revalidatePath(`/destination/${destId}`);
+        return { success: true };
+    } catch (error) {
+        console.error("Failed to rename file:", error);
+        return { success: false, error: "Failed to rename file" };
     }
 }
