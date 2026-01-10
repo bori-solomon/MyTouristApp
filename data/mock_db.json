@@ -1,0 +1,95 @@
+[
+    {
+        "id": "dest-1",
+        "name": "London",
+        "createdTime": "2026-01-06T12:00:00.000Z",
+        "travelDate": "2025-06-15",
+        "participants": [
+            "Alice",
+            "Bob"
+        ],
+        "attractions": [
+            {
+                "id": "attr-1",
+                "name": "Big Ben",
+                "addedAt": "2025-01-01T12:00:00.000Z"
+            },
+            {
+                "id": "attr-2",
+                "name": "London Eye",
+                "addedAt": "2025-01-01T13:00:00.000Z"
+            }
+        ],
+        "categories": [
+            {
+                "id": "cat-1-0",
+                "name": "Visa/Docs",
+                "files": []
+            },
+            {
+                "id": "cat-1-1",
+                "name": "Air Tickets",
+                "files": [
+                    {
+                        "id": "file-1",
+                        "name": "Flight to Lhr.pdf",
+                        "mimeType": "application/pdf",
+                        "createdTime": "2025-01-01T14:00:00.000Z"
+                    }
+                ]
+            },
+            {
+                "id": "cat-1-2",
+                "name": "Hotels",
+                "files": []
+            },
+            {
+                "id": "cat-1-3",
+                "name": "Transport",
+                "files": []
+            }
+        ]
+    },
+    {
+        "id": "dest-2",
+        "name": "Paris",
+        "createdTime": "2026-01-06T12:00:00.000Z",
+        "travelDate": "2026-04-22",
+        "participants": [],
+        "attractions": [],
+        "categories": [
+            {
+                "id": "cat-2-0",
+                "name": "Visa/Docs",
+                "files": []
+            },
+            {
+                "id": "cat-2-1",
+                "name": "Air Tickets",
+                "files": []
+            },
+            {
+                "id": "cat-2-2",
+                "name": "Hotels",
+                "files": [
+                    {
+                        "id": "file-1767724522264",
+                        "name": "Mariia - Online application to arrive to Israel.pdf",
+                        "mimeType": "application/pdf",
+                        "createdTime": "2026-01-06T18:35:22.264Z"
+                    }
+                ]
+            },
+            {
+                "id": "cat-2-3",
+                "name": "Transport",
+                "files": []
+            },
+            {
+                "id": "cat-1767718607054",
+                "name": "marshrut",
+                "files": []
+            }
+        ]
+    }
+]
