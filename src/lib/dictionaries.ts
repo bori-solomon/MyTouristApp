@@ -28,8 +28,10 @@ export type Dictionary = {
         fields: {
             destination: string;
             date: string;
+            dueDate: string;
             participants: string;
             setDate: string;
+            setDueDate: string;
             addPeople: string;
         }
     };
@@ -47,6 +49,18 @@ export type Dictionary = {
             airTickets: string;
             hotels: string;
             transport: string;
+            plan: string;
+        };
+        plan: {
+            title: string;
+            addItem: string;
+            itemTitle: string;
+            location: string;
+            startDate: string;
+            endDate: string;
+            notes: string;
+            links: string;
+            empty: string;
         };
         attractions: {
             title: string;
@@ -86,8 +100,10 @@ export const dictionaries: Record<Locale, Dictionary> = {
             fields: {
                 destination: "Destination",
                 date: "Travel Date",
+                dueDate: "Due Date",
                 participants: "Participants",
                 setDate: "Set Date",
+                setDueDate: "Set Due Date",
                 addPeople: "Add People"
             }
         },
@@ -104,7 +120,19 @@ export const dictionaries: Record<Locale, Dictionary> = {
                 attractions: "Attractions",
                 airTickets: "Air Tickets",
                 hotels: "Hotels",
-                transport: "Transport"
+                transport: "Transport",
+                plan: "Trip Plan"
+            },
+            plan: {
+                title: "Trip Plan",
+                addItem: "Add Activity",
+                itemTitle: "Activity Title",
+                location: "Location",
+                startDate: "Start Date",
+                endDate: "End Date",
+                notes: "Notes",
+                links: "Links",
+                empty: "No activities planned yet. Start by adding your first stop!"
             },
             attractions: {
                 title: "Attractions",
@@ -142,8 +170,10 @@ export const dictionaries: Record<Locale, Dictionary> = {
             fields: {
                 destination: "Направление",
                 date: "Дата",
+                dueDate: "Срок (Due Date)",
                 participants: "Участники",
                 setDate: "Ук. дату",
+                setDueDate: "Ук. срок",
                 addPeople: "Добавить"
             }
         },
@@ -160,7 +190,19 @@ export const dictionaries: Record<Locale, Dictionary> = {
                 attractions: "Достопримечательности",
                 airTickets: "Авиабилеты",
                 hotels: "Отели",
-                transport: "Транспорт"
+                transport: "Транспорт",
+                plan: "План поездки"
+            },
+            plan: {
+                title: "План поездки",
+                addItem: "Добавить активность",
+                itemTitle: "Заголовок",
+                location: "Место",
+                startDate: "Дата начала",
+                endDate: "Дата окончания",
+                notes: "Заметки",
+                links: "Ссылки",
+                empty: "План пока пуст. Начните с первой активности!"
             },
             attractions: {
                 title: "Достопримечательности",
@@ -198,8 +240,10 @@ export const dictionaries: Record<Locale, Dictionary> = {
             fields: {
                 destination: "Напрямок",
                 date: "Дата подорожі",
+                dueDate: "Термін (Due Date)",
                 participants: "Учасники",
                 setDate: "Вст. дату",
+                setDueDate: "Вст. термін",
                 addPeople: "Додати"
             }
         },
@@ -216,7 +260,19 @@ export const dictionaries: Record<Locale, Dictionary> = {
                 attractions: "Пам'ятки",
                 airTickets: "Авіаквитки",
                 hotels: "Готелі",
-                transport: "Транспорт"
+                transport: "Транспорт",
+                plan: "План поїздки"
+            },
+            plan: {
+                title: "План поїздки",
+                addItem: "Додати активність",
+                itemTitle: "Заголовок",
+                location: "Місце",
+                startDate: "Дата початку",
+                endDate: "Дата закінчення",
+                notes: "Нотатки",
+                links: "Посилання",
+                empty: "План поки порожній. Почніть з першої активності!"
             },
             attractions: {
                 title: "Пам'ятки",
@@ -254,8 +310,10 @@ export const dictionaries: Record<Locale, Dictionary> = {
             fields: {
                 destination: "目的地",
                 date: "旅行日",
+                dueDate: "期日",
                 participants: "参加者",
                 setDate: "日付を設定",
+                setDueDate: "期日を設定",
                 addPeople: "追加"
             }
         },
@@ -272,7 +330,19 @@ export const dictionaries: Record<Locale, Dictionary> = {
                 attractions: "観光スポット",
                 airTickets: "航空券",
                 hotels: "ホテル",
-                transport: "交通機関"
+                transport: "交通機関",
+                plan: "旅行計画"
+            },
+            plan: {
+                title: "旅行計画",
+                addItem: "アクティビティを追加",
+                itemTitle: "タイトル",
+                location: "場所",
+                startDate: "開始日",
+                endDate: "終了日",
+                notes: "メモ",
+                links: "リンク",
+                empty: "計画はまだありません。最初のアクティビティを追加しましょう！"
             },
             attractions: {
                 title: "観光スポット",

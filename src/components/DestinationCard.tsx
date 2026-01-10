@@ -1,7 +1,7 @@
 "use client";
 
 import { Destination } from "@/types";
-import { ArrowRight, MapPin, Calendar, Users } from "lucide-react";
+import { ArrowRight, MapPin, Calendar, Users, Clock } from "lucide-react";
 import Link from "next/link";
 import { format, isFuture } from "date-fns";
 import { useState } from "react";
@@ -14,6 +14,7 @@ interface DestinationCardProps {
 
 export function DestinationCard({ destination }: DestinationCardProps) {
     const [travelDate, setTravelDate] = useState(destination.travelDate || "");
+    const [dueDate, setDueDate] = useState(destination.dueDate || "");
     const [participants, setParticipants] = useState(destination.participants?.join(", ") || "");
     const [isEditing, setIsEditing] = useState(false);
 
@@ -24,6 +25,7 @@ export function DestinationCard({ destination }: DestinationCardProps) {
         e.stopPropagation();
         await updateDestinationAction(destination.id, {
             travelDate,
+            dueDate,
             participants: participants.split(",").map(p => p.trim()).filter(Boolean)
         });
         setIsEditing(false);
@@ -62,7 +64,7 @@ export function DestinationCard({ destination }: DestinationCardProps) {
                         </p>
                     </div>
 
-                    <div className="space-y-3">
+                    <div className="space-y-3 relative z-20" onClick={(e) => e.stopPropagation()}>
                         <div className="flex items-center gap-2 text-sm text-muted-foreground" onClick={toggleEdit}>
                             <Calendar className="w-4 h-4" />
                             {isEditing ? (
@@ -71,10 +73,27 @@ export function DestinationCard({ destination }: DestinationCardProps) {
                                     value={travelDate}
                                     onChange={(e) => setTravelDate(e.target.value)}
                                     onClick={(e) => e.stopPropagation()}
-                                    className="bg-background border border-border rounded px-2 py-0.5 text-xs w-full"
+                                    onMouseDown={(e) => e.stopPropagation()}
+                                    className="bg-background border border-border rounded px-2 py-0.5 text-xs w-full focus:ring-1 focus:ring-primary outline-none"
                                 />
                             ) : (
                                 <span>{destination.travelDate ? format(new Date(destination.travelDate), "MMM d, yyyy") : dict.dashboard.fields.setDate}</span>
+                            )}
+                        </div>
+
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground" onClick={toggleEdit}>
+                            <Clock className="w-4 h-4 text-orange-400/70" />
+                            {isEditing ? (
+                                <input
+                                    type="date"
+                                    value={dueDate}
+                                    onChange={(e) => setDueDate(e.target.value)}
+                                    onClick={(e) => e.stopPropagation()}
+                                    onMouseDown={(e) => e.stopPropagation()}
+                                    className="bg-background border border-border rounded px-2 py-0.5 text-xs w-full focus:ring-1 focus:ring-primary outline-none"
+                                />
+                            ) : (
+                                <span>{destination.dueDate ? format(new Date(destination.dueDate), "MMM d, yyyy") : dict.dashboard.fields.setDueDate}</span>
                             )}
                         </div>
 
@@ -86,8 +105,9 @@ export function DestinationCard({ destination }: DestinationCardProps) {
                                     value={participants}
                                     onChange={(e) => setParticipants(e.target.value)}
                                     onClick={(e) => e.stopPropagation()}
+                                    onMouseDown={(e) => e.stopPropagation()}
                                     placeholder={dict.dashboard.fields.participants + "..."}
-                                    className="bg-background border border-border rounded px-2 py-0.5 text-xs w-full"
+                                    className="bg-background border border-border rounded px-2 py-0.5 text-xs w-full focus:ring-1 focus:ring-primary outline-none"
                                 />
                             ) : (
                                 <span className="truncate">
@@ -100,7 +120,7 @@ export function DestinationCard({ destination }: DestinationCardProps) {
                             {isEditing ? (
                                 <button
                                     onClick={handleSave}
-                                    className="text-xs bg-primary text-primary-foreground px-3 py-1.5 rounded-md hover:bg-primary/90 z-20"
+                                    className="text-xs bg-primary text-primary-foreground px-3 py-1.5 rounded-md hover:bg-primary/90"
                                 >
                                     {dict.common.save}
                                 </button>

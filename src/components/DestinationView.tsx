@@ -2,10 +2,11 @@
 
 import { Destination, DriveFile } from "@/types";
 import { useState } from "react";
-import { FileText, Image as ImageIcon, Plus, ExternalLink, Loader2, Trash2, LayoutGrid, List, Edit2 } from "lucide-react";
+import { FileText, Image as ImageIcon, Plus, ExternalLink, Loader2, Trash2, LayoutGrid, List, Edit2, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { FileUploader } from "./FileUploader";
 import { AttractionList } from "./AttractionList";
+import { TripPlanView } from "./TripPlanView";
 import { addNewAttraction, addNewCategory, deleteAttraction, uploadFileAction, deleteFileAction, renameFileAction } from "@/app/actions";
 import { useLanguage } from "@/contexts/LanguageContext";
 
@@ -16,10 +17,11 @@ interface DestinationViewProps {
 export function DestinationView({ destination }: DestinationViewProps) {
     const { dict } = useLanguage();
 
-    // Find initial category based on visual order: Visa/Docs -> Air Tickets -> Hotels -> Transport -> Attractions
+    // Find initial category based on visual order: Plan -> Visa/Docs -> Air Tickets -> Hotels -> Transport -> Attractions
     const getInitialCategory = () => {
-        const order = ["Visa/Docs", "Air Tickets", "Hotels", "Transport"];
+        const order = ["plan", "Visa/Docs", "Air Tickets", "Hotels", "Transport"];
         for (const name of order) {
+            if (name === "plan") return "plan";
             const cat = destination.categories.find(c => c.name === name);
             if (cat) return cat.id;
         }
@@ -87,6 +89,18 @@ export function DestinationView({ destination }: DestinationViewProps) {
         <div className="space-y-6">
             {/* Tabs */}
             <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide">
+                <button
+                    onClick={() => setActiveCategoryId("plan")}
+                    className={cn(
+                        "px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors",
+                        activeCategoryId === "plan"
+                            ? "bg-primary text-primary-foreground shadow-md"
+                            : "bg-muted text-muted-foreground hover:bg-muted/80"
+                    )}
+                >
+                    {dict.destination.tabs.plan}
+                </button>
+
                 {/* 1. Main 4 Categories in specific order */}
                 {["Visa/Docs", "Air Tickets", "Hotels", "Transport"].map(name => {
                     const cat = destination.categories.find(c => c.name === name);
@@ -155,7 +169,7 @@ export function DestinationView({ destination }: DestinationViewProps) {
                             <Plus className="w-4 h-4" />
                         </button>
                         <button type="button" onClick={() => setIsAddingCategory(false)} className="p-1.5 text-muted-foreground hover:text-foreground">
-                            <XIcon className="w-4 h-4" />
+                            <X className="w-4 h-4" />
                         </button>
                     </form>
                 ) : (
@@ -170,7 +184,9 @@ export function DestinationView({ destination }: DestinationViewProps) {
             </div>
 
             {/* Content Area */}
-            {activeCategoryId === "attractions" ? (
+            {activeCategoryId === "plan" ? (
+                <TripPlanView destination={destination} />
+            ) : activeCategoryId === "attractions" ? (
                 <div className="bg-card border border-border rounded-2xl p-6 min-h-[400px]">
                     <AttractionList
                         attractions={destination.attractions}

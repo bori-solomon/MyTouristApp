@@ -1,4 +1,4 @@
-import { Destination, Category, DriveFile, Attraction } from "@/types";
+import { Destination, Category, DriveFile, Attraction, PlanEntry } from "@/types";
 import { promises as fs } from "fs";
 import path from "path";
 import {
@@ -74,7 +74,9 @@ export async function getDestinations(): Promise<Destination[]> {
                         categories: [],
                         createdTime: folder.createdTime,
                         travelDate: "",
+                        dueDate: "",
                         participants: [],
+                        plan: [],
                     };
                     destinations.push(dest);
                 }
@@ -146,7 +148,9 @@ export async function getDestination(id: string): Promise<Destination | null> {
             createdTime: folder.data.createdTime,
             categories,
             attractions: metadata?.attractions || [],
+            plan: metadata?.plan || [],
             travelDate: metadata?.travelDate || "",
+            dueDate: metadata?.dueDate || "",
             participants: metadata?.participants || [],
         };
     } catch (error) {
@@ -201,7 +205,9 @@ export async function createDestination(name: string): Promise<Destination> {
             ],
             createdTime: new Date().toISOString(),
             travelDate: "",
-            participants: []
+            dueDate: "",
+            participants: [],
+            plan: []
         };
         destinations.push(newDest);
         await saveMockData(destinations);
@@ -237,7 +243,9 @@ export async function createDestination(name: string): Promise<Destination> {
         categories,
         createdTime: new Date().toISOString(),
         travelDate: "",
+        dueDate: "",
         participants: [],
+        plan: [],
     };
 
     await saveDestinationMetadata(drive, destFolderId, newDest);
@@ -414,4 +422,35 @@ export async function renameFile(destId: string, categoryId: string, fileId: str
 
     const { drive } = client;
     await renameFileInDrive(drive, fileId, newName);
+}
+
+export async function updatePlan(destId: string, plan: PlanEntry[]): Promise<void> {
+    if (USE_MOCK) {
+        const destinations = await getMockData();
+        const dest = destinations.find(d => d.id === destId);
+        if (!dest) throw new Error("Destination not found");
+        dest.plan = plan;
+        await saveMockData(destinations);
+        return;
+    }
+
+    const client = await getDriveClient();
+    if (!client) throw new Error("Not authenticated");
+
+    const destination = await getDestination(destId);
+    if (!destination) throw new Error("Destination not found");
+
+    destination.plan = plan;
+
+    await saveDestinationMetadata(
+        client.drive,
+        destId,
+        {
+            attractions: destination.attractions,
+            travelDate: destination.travelDate,
+            dueDate: destination.dueDate,
+            participants: destination.participants,
+            plan: destination.plan
+        }
+    );
 }

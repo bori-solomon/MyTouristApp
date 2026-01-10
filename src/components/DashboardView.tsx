@@ -14,7 +14,7 @@ interface DashboardViewProps {
     initialDestinations: Destination[];
 }
 
-type SortField = "createdTime" | "travelDate" | "name";
+type SortField = "createdTime" | "travelDate" | "dueDate" | "name";
 type SortOrder = "asc" | "desc";
 
 export function DashboardView({ initialDestinations }: DashboardViewProps) {
@@ -31,7 +31,7 @@ export function DashboardView({ initialDestinations }: DashboardViewProps) {
         let valB: string | number = b[sortField] || "";
 
         // Handle timestamps/dates
-        if (sortField === "createdTime" || sortField === "travelDate") {
+        if (sortField === "createdTime" || sortField === "travelDate" || sortField === "dueDate") {
             // If date is valid, convert to number, else 0
             valA = valA ? new Date(valA as string).getTime() : 0;
             valB = valB ? new Date(valB as string).getTime() : 0;
@@ -127,7 +127,7 @@ export function DashboardView({ initialDestinations }: DashboardViewProps) {
 
                 <div className="flex items-center gap-4 text-sm overflow-x-auto pb-2 sm:pb-0">
                     <span className="text-muted-foreground whitespace-nowrap">{dict.dashboard.sort.label}</span>
-                    {(["createdTime", "travelDate", "name"] as SortField[]).map((field) => (
+                    {(["createdTime", "travelDate", "dueDate", "name"] as SortField[]).map((field) => (
                         <button
                             key={field}
                             onClick={() => handleSort(field)}
@@ -136,7 +136,10 @@ export function DashboardView({ initialDestinations }: DashboardViewProps) {
                                 sortField === field ? "text-primary" : "text-muted-foreground"
                             )}
                         >
-                            {field === "createdTime" ? dict.dashboard.sort.created : field === "travelDate" ? dict.dashboard.sort.date : dict.dashboard.sort.destination}
+                            {field === "createdTime" ? dict.dashboard.sort.created :
+                                field === "travelDate" ? dict.dashboard.sort.date :
+                                    field === "dueDate" ? dict.dashboard.fields.dueDate :
+                                        dict.dashboard.sort.destination}
                             {sortField === field && <ArrowUpDown className="w-3 h-3" />}
                         </button>
                     ))}
@@ -161,6 +164,7 @@ export function DashboardView({ initialDestinations }: DashboardViewProps) {
                     <div className="hidden md:flex px-4 py-2 text-sm font-medium text-muted-foreground">
                         <div className="flex-1 min-w-[200px]">{dict.dashboard.fields.destination}</div>
                         <div className="flex-1 min-w-[150px]">{dict.dashboard.fields.date}</div>
+                        <div className="flex-1 min-w-[150px]">{dict.dashboard.fields.dueDate}</div>
                         <div className="flex-1 min-w-[200px]">{dict.dashboard.fields.participants}</div>
                         <div className="w-[100px]"></div>
                     </div>

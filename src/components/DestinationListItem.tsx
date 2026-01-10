@@ -2,7 +2,7 @@
 
 import { Destination } from "@/types";
 import { format, isFuture } from "date-fns";
-import { Users, Calendar, ArrowRight, MapPin } from "lucide-react";
+import { Users, Calendar, ArrowRight, MapPin, Clock } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { updateDestinationAction } from "@/app/actions";
@@ -16,6 +16,7 @@ interface DestinationListItemProps {
 export function DestinationListItem({ destination }: DestinationListItemProps) {
     const [isEditing, setIsEditing] = useState(false);
     const [travelDate, setTravelDate] = useState(destination.travelDate || "");
+    const [dueDate, setDueDate] = useState(destination.dueDate || "");
     const [participants, setParticipants] = useState(destination.participants?.join(", ") || "");
 
     const { dict } = useLanguage();
@@ -23,6 +24,7 @@ export function DestinationListItem({ destination }: DestinationListItemProps) {
     const handleSave = async () => {
         await updateDestinationAction(destination.id, {
             travelDate,
+            dueDate,
             participants: participants.split(",").map(p => p.trim()).filter(Boolean)
         });
         setIsEditing(false);
@@ -63,6 +65,23 @@ export function DestinationListItem({ destination }: DestinationListItemProps) {
                     <div className="flex items-center gap-2 text-sm text-muted-foreground" onClick={() => setIsEditing(true)}>
                         <Calendar className="w-4 h-4" />
                         <span>{destination.travelDate ? format(new Date(destination.travelDate), "MMM d, yyyy") : dict.dashboard.fields.setDate}</span>
+                    </div>
+                )}
+            </div>
+
+            {/* Due Date */}
+            <div className="flex-1 min-w-[150px]">
+                {isEditing ? (
+                    <input
+                        type="date"
+                        value={dueDate}
+                        onChange={(e) => setDueDate(e.target.value)}
+                        className="w-full bg-background border border-border rounded px-2 py-1 text-sm"
+                    />
+                ) : (
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground" onClick={() => setIsEditing(true)}>
+                        <Clock className="w-4 h-4 text-orange-400/70" />
+                        <span>{destination.dueDate ? format(new Date(destination.dueDate), "MMM d, yyyy") : dict.dashboard.fields.setDueDate}</span>
                     </div>
                 )}
             </div>

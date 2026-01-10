@@ -1,6 +1,6 @@
 "use server";
 
-import { addAttraction, createCategory, removeAttraction, uploadFile, deleteFile, updateDestination, createDestination, renameFile } from "@/lib/driveService";
+import { addAttraction, createCategory, removeAttraction, uploadFile, deleteFile, updateDestination, createDestination, renameFile, updatePlan } from "@/lib/driveService";
 import { revalidatePath } from "next/cache";
 
 export async function addNewCategory(destId: string, name: string) {
@@ -94,5 +94,16 @@ export async function renameFileAction(destId: string, categoryId: string, fileI
     } catch (error) {
         console.error("Failed to rename file:", error);
         return { success: false, error: "Failed to rename file" };
+    }
+}
+
+export async function updatePlanAction(destId: string, plan: any[]) {
+    try {
+        await updatePlan(destId, plan);
+        revalidatePath(`/destination/${destId}`);
+        return { success: true };
+    } catch (error) {
+        console.error("Failed to update plan:", error);
+        return { success: false, error: "Failed to update plan" };
     }
 }
