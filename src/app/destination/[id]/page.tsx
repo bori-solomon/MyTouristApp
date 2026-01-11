@@ -24,21 +24,21 @@ export default async function DestinationPage({ params }: PageProps) {
             <div className="mb-8">
                 <Link
                     href="/"
-                    className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground transition-colors mb-4"
+                    className="inline-flex items-center gap-2 px-4 py-3 rounded-xl bg-muted/30 hover:bg-muted text-foreground hover:text-primary transition-all mb-6 font-medium active:scale-95"
                 >
-                    <ArrowLeft className="w-4 h-4 mr-1" />
+                    <ArrowLeft className="w-4 h-4" />
                     Back to Dashboard
                 </Link>
 
-                <div className="relative rounded-3xl overflow-hidden bg-card border border-border aspect-[5/1] flex items-end p-8">
+                <div className="relative rounded-3xl overflow-hidden bg-card border border-border min-h-[200px] aspect-auto sm:aspect-[5/1] flex items-end p-6 sm:p-8">
                     <div className="absolute inset-0 bg-gradient-to-r from-primary/20 via-background to-background" />
                     <div className="relative z-10 w-full">
                         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
                             <div>
-                                <h1 className={`text-5xl font-bold tracking-tight mb-2 ${isUpcoming ? "text-yellow-400" : ""}`}>
+                                <h1 className={`text-3xl sm:text-5xl font-bold tracking-tight mb-2 ${isUpcoming ? "text-yellow-400" : ""}`}>
                                     {destination.name}
                                 </h1>
-                                <p className="text-muted-foreground text-lg">
+                                <p className="text-muted-foreground text-sm sm:text-lg">
                                     Plan and organize your trip details
                                 </p>
                             </div>

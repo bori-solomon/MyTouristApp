@@ -101,7 +101,7 @@ export function TripPlanView({ destination }: TripPlanViewProps) {
                 </button>
             </div>
 
-            {/* Gantt Visualization Area - Vertical Scroll with Horizontal Bars */}
+            {/* Gantt Visualization Area - Grid Layout */}
             <div className="bg-card rounded-2xl border border-border overflow-hidden relative min-h-[500px] flex flex-col">
                 {sortedPlan.length === 0 ? (
                     <div className="flex-1 flex flex-col items-center justify-center text-muted-foreground p-8 text-center">
@@ -110,112 +110,96 @@ export function TripPlanView({ destination }: TripPlanViewProps) {
                     </div>
                 ) : (
                     <div className="divide-y divide-border">
-                        {/* Map through all unique days in the plan range */}
-                        {(() => {
-                            const entriesByDate: Record<string, PlanEntry[]> = {};
-                            sortedPlan.forEach(entry => {
-                                const date = format(new Date(entry.startDate), "yyyy-MM-dd");
-                                if (!entriesByDate[date]) entriesByDate[date] = [];
-                                entriesByDate[date].push(entry);
-                            });
-
-                            return Object.keys(entriesByDate).sort().map(dateStr => {
-                                const date = new Date(dateStr);
-                                const dayEntries = entriesByDate[dateStr];
-
-                                return (
-                                    <div key={dateStr} className="flex group/day">
-                                        {/* Date Column (Sticky-ish vertical axis) */}
-                                        <div className="w-24 sm:w-32 py-6 px-4 border-r border-border bg-muted/5 flex flex-col items-center justify-start shrink-0">
-                                            <span className="text-xs font-bold text-primary uppercase tracking-tighter opacity-70">
-                                                {format(date, "EEE")}
+                        {sortedPlan.map((entry) => (
+                            <div
+                                key={entry.id}
+                                className="group bg-card hover:bg-muted/30 transition-all p-3 sm:p-6 grid grid-cols-[70px_1fr] sm:grid-cols-[180px_1fr_2fr] gap-3 sm:gap-8 items-start"
+                            >
+                                {/* Column 1: Dates (Compact Horizontal) */}
+                                <div className="flex flex-col sm:flex-row items-center justify-center sm:gap-3 sm:border-r sm:border-border/50 sm:pr-6 h-full text-xs sm:text-base font-bold text-foreground">
+                                    {entry.startDate === entry.endDate ? (
+                                        <span className="whitespace-nowrap">
+                                            {format(new Date(entry.startDate), "MMM d")}
+                                        </span>
+                                    ) : (
+                                        <>
+                                            <span className="whitespace-nowrap">
+                                                {format(new Date(entry.startDate), "MMM d")}
                                             </span>
-                                            <span className="text-2xl font-black text-foreground">
-                                                {format(date, "d")}
+                                            <span className="text-muted-foreground/50 rotate-90 sm:rotate-0 my-0.5 sm:my-0">—</span>
+                                            <span className="whitespace-nowrap">
+                                                {format(new Date(entry.endDate), "MMM d")}
                                             </span>
-                                            <span className="text-xs font-medium text-muted-foreground">
-                                                {format(date, "MMM")}
+                                        </>
+                                    )}
+                                </div>
+
+                                {/* Column 2 & 3: Location & Details (Merged on Mobile) */}
+                                <div className="col-span-1 sm:col-span-2 grid grid-cols-1 sm:grid-cols-[1fr_2fr] gap-2 sm:gap-8">
+                                    {/* Location */}
+                                    <div className="flex flex-col gap-1 sm:gap-2 sm:border-r sm:border-border/50 sm:pr-6 h-full min-w-0">
+                                        <div className="flex items-start gap-1.5 sm:gap-2">
+                                            <MapPin className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary shrink-0 mt-0.5 sm:mt-1" />
+                                            <span className="font-semibold text-foreground text-sm sm:text-lg leading-tight break-words">
+                                                {entry.location || "---"}
                                             </span>
                                         </div>
-
-                                        {/* Activities Column */}
-                                        <div className="flex-1 p-4 sm:p-6 space-y-4">
-                                            {dayEntries.map((entry) => (
-                                                <div
-                                                    key={entry.id}
-                                                    className="group relative bg-muted/30 hover:bg-muted/50 rounded-xl p-4 transition-all border border-transparent hover:border-primary/20 shadow-sm"
-                                                >
-                                                    <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
-                                                        <div className="flex-1 min-w-0">
-                                                            <div className="flex items-center gap-2 mb-1">
-                                                                <h3 className="text-base font-bold text-foreground truncate">{entry.title}</h3>
-                                                                {differenceInDays(new Date(entry.endDate), new Date(entry.startDate)) > 0 && (
-                                                                    <span className="px-2 py-0.5 bg-primary/10 text-primary text-[10px] font-bold rounded-full uppercase">
-                                                                        {differenceInDays(new Date(entry.endDate), new Date(entry.startDate)) + 1} Days
-                                                                    </span>
-                                                                )}
-                                                            </div>
-
-                                                            <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
-                                                                {entry.location && (
-                                                                    <div className="flex items-center gap-1">
-                                                                        <MapPin className="w-3 h-3 text-primary/60" />
-                                                                        {entry.location}
-                                                                    </div>
-                                                                )}
-                                                                <div className="flex items-center gap-1">
-                                                                    <Clock className="w-3 h-3 text-primary/60" />
-                                                                    {format(new Date(entry.startDate), "p")} - {format(new Date(entry.endDate), "p")}
-                                                                </div>
-                                                            </div>
-
-                                                            {entry.notes && (
-                                                                <div className="mt-3 text-xs text-muted-foreground bg-background/40 p-3 rounded-lg border border-border/50">
-                                                                    <p className="line-clamp-2 hover:line-clamp-none transition-all">{entry.notes}</p>
-                                                                </div>
-                                                            )}
-
-                                                            {entry.links && entry.links.length > 0 && (
-                                                                <div className="mt-3 flex flex-wrap gap-2">
-                                                                    {entry.links.map((link, i) => (
-                                                                        <a
-                                                                            key={i}
-                                                                            href={link.url}
-                                                                            target="_blank"
-                                                                            rel="noopener noreferrer"
-                                                                            className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-background border border-border rounded-lg text-[11px] font-semibold hover:border-primary/50 hover:text-primary transition-all shadow-sm"
-                                                                        >
-                                                                            <LinkIcon className="w-2.5 h-2.5" />
-                                                                            {link.title}
-                                                                        </a>
-                                                                    ))}
-                                                                </div>
-                                                            )}
-                                                        </div>
-
-                                                        {/* Actions Overlay */}
-                                                        <div className="flex items-center gap-1 sm:opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
-                                                            <button
-                                                                onClick={() => handleEdit(entry)}
-                                                                className="p-2 hover:bg-background rounded-lg text-muted-foreground hover:text-primary transition-all"
-                                                            >
-                                                                <Edit2 className="w-3.5 h-3.5" />
-                                                            </button>
-                                                            <button
-                                                                onClick={() => handleDelete(entry.id)}
-                                                                className="p-2 hover:bg-background rounded-lg text-muted-foreground hover:text-destructive transition-all"
-                                                            >
-                                                                <Trash2 className="w-3.5 h-3.5" />
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            ))}
-                                        </div>
+                                        {differenceInDays(new Date(entry.endDate), new Date(entry.startDate)) > 0 && (
+                                            <span className="inline-flex items-center px-1.5 py-0.5 sm:px-2 sm:py-1 bg-primary/10 text-primary text-[10px] sm:text-xs font-bold rounded-md uppercase self-start">
+                                                {differenceInDays(new Date(entry.endDate), new Date(entry.startDate)) + 1} Days
+                                            </span>
+                                        )}
                                     </div>
-                                );
-                            });
-                        })()}
+
+                                    {/* Details */}
+                                    <div className="flex flex-col gap-2 sm:gap-3 min-w-0 relative">
+                                        <div className="flex items-start justify-between gap-3">
+                                            <h3 className="text-base sm:text-xl font-bold text-foreground leading-tight">{entry.title}</h3>
+
+                                            {/* Actions */}
+                                            <div className="flex items-center gap-1 opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
+                                                <button
+                                                    onClick={() => handleEdit(entry)}
+                                                    className="p-1.5 sm:p-2 hover:bg-background rounded-lg text-muted-foreground hover:text-primary transition-all"
+                                                >
+                                                    <Edit2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                                                </button>
+                                                <button
+                                                    onClick={() => handleDelete(entry.id)}
+                                                    className="p-1.5 sm:p-2 hover:bg-background rounded-lg text-muted-foreground hover:text-destructive transition-all"
+                                                >
+                                                    <Trash2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        {entry.notes && (
+                                            <div className="text-xs sm:text-sm text-muted-foreground bg-muted/30 p-2 sm:p-3 rounded-lg sm:rounded-xl border border-border/50">
+                                                <p className="whitespace-pre-wrap line-clamp-3 sm:line-clamp-none hover:line-clamp-none transition-all">{entry.notes}</p>
+                                            </div>
+                                        )}
+
+                                        {entry.links && entry.links.length > 0 && (
+                                            <div className="flex flex-wrap gap-1.5 sm:gap-2 pt-0.5">
+                                                {entry.links.map((link, i) => (
+                                                    <a
+                                                        key={i}
+                                                        href={link.url}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="inline-flex items-center gap-1.5 sm:gap-2 px-2 py-1 sm:px-3 sm:py-1.5 bg-background border border-border rounded-lg text-xs sm:text-sm font-medium hover:border-primary/50 hover:text-primary transition-all shadow-sm group/link"
+                                                    >
+                                                        <LinkIcon className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-muted-foreground group-hover/link:text-primary transition-colors" />
+                                                        {link.title}
+                                                    </a>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+
+                        ))}
                     </div>
                 )}
             </div>

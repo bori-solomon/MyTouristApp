@@ -86,7 +86,7 @@ export function DestinationView({ destination }: DestinationViewProps) {
     };
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
             {/* Tabs */}
             <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide">
                 <button
@@ -187,7 +187,7 @@ export function DestinationView({ destination }: DestinationViewProps) {
             {activeCategoryId === "plan" ? (
                 <TripPlanView destination={destination} />
             ) : activeCategoryId === "attractions" ? (
-                <div className="bg-card border border-border rounded-2xl p-6 min-h-[400px]">
+                <div className="bg-card border border-border rounded-2xl p-4 sm:p-6 min-h-[400px]">
                     <AttractionList
                         attractions={destination.attractions}
                         onAdd={handleAddAttraction}
@@ -195,7 +195,7 @@ export function DestinationView({ destination }: DestinationViewProps) {
                     />
                 </div>
             ) : activeCategory ? (
-                <div className="bg-card border border-border rounded-2xl p-6 min-h-[400px]">
+                <div className="bg-card border border-border rounded-2xl p-4 sm:p-6 min-h-[400px]">
                     <div className="flex items-center justify-between mb-6">
                         <div className="flex items-center gap-4">
                             <h2 className="text-2xl font-bold">

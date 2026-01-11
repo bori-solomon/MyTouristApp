@@ -41,7 +41,7 @@ export function DestinationCard({ destination }: DestinationCardProps) {
 
     return (
         <Link href={`/destination/${destination.id}`} className="group block h-full">
-            <div className="relative overflow-hidden rounded-2xl border border-border bg-card hover:border-primary/50 transition-all duration-300 shadow-sm hover:shadow-md hover:shadow-primary/5 h-full flex flex-col justify-end p-6 min-h-[250px]">
+            <div className="relative overflow-hidden rounded-2xl border border-border bg-card hover:border-primary/50 transition-all duration-300 shadow-sm hover:shadow-md hover:shadow-primary/5 h-full flex flex-col justify-end p-4 sm:p-6 min-h-[180px] sm:min-h-[250px]">
 
                 {/* Abstract Gradient Background */}
                 <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-secondary/50 group-hover:scale-105 transition-transform duration-500" />
@@ -49,22 +49,22 @@ export function DestinationCard({ destination }: DestinationCardProps) {
 
                 <div className="relative z-10 flex flex-col h-full justify-between">
                     <div>
-                        <div className="flex items-center gap-2 mb-2 text-primary">
-                            <MapPin className="w-4 h-4" />
-                            <span className="text-xs font-medium uppercase tracking-wider">{dict.dashboard.fields.destination}</span>
-                            <span className="text-xs ml-auto text-muted-foreground">{format(new Date(destination.createdTime || new Date()), "MMM d, yyyy")}</span>
+                        <div className="flex items-center gap-2 mb-1.5 sm:mb-2 text-primary">
+                            <MapPin className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                            <span className="text-[10px] sm:text-xs font-medium uppercase tracking-wider">{dict.dashboard.fields.destination}</span>
+                            <span className="text-[10px] sm:text-xs ml-auto text-muted-foreground">{format(new Date(destination.createdTime || new Date()), "MMM d, yyyy")}</span>
                         </div>
                         {/* Conditionally style the name based on date */}
-                        <h3 className={`text-2xl font-bold mb-1 transition-colors ${isUpcoming ? "text-yellow-400" : "text-foreground group-hover:text-primary"
+                        <h3 className={`text-lg sm:text-2xl font-bold mb-1 transition-colors ${isUpcoming ? "text-yellow-400" : "text-foreground group-hover:text-primary"
                             }`}>
                             {destination.name}
                         </h3>
-                        <p className="text-muted-foreground text-sm line-clamp-2 mb-4">
-                            {destination.categories.length} categories • {destination.attractions.length} attractions
+                        <p className="text-muted-foreground text-xs sm:text-sm line-clamp-2 mb-2 sm:mb-4">
+                            {(destination.categories || []).length} categories • {(destination.attractions || []).length} attractions
                         </p>
                     </div>
 
-                    <div className="space-y-3 relative z-20" onClick={(e) => e.stopPropagation()}>
+                    <div className="space-y-2 sm:space-y-3 relative z-20" onClick={(e) => e.stopPropagation()}>
                         <div className="flex items-center gap-2 text-sm text-muted-foreground" onClick={toggleEdit}>
                             <Calendar className="w-4 h-4" />
                             {isEditing ? (
@@ -97,8 +97,8 @@ export function DestinationCard({ destination }: DestinationCardProps) {
                             )}
                         </div>
 
-                        <div className="flex items-center gap-2 text-sm text-muted-foreground" onClick={toggleEdit}>
-                            <Users className="w-4 h-4" />
+                        <div className="flex items-center gap-2 text-xs sm:text-sm text-muted-foreground min-h-[1.5rem]" onClick={toggleEdit}>
+                            <Users className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
                             {isEditing ? (
                                 <input
                                     type="text"
@@ -107,10 +107,10 @@ export function DestinationCard({ destination }: DestinationCardProps) {
                                     onClick={(e) => e.stopPropagation()}
                                     onMouseDown={(e) => e.stopPropagation()}
                                     placeholder={dict.dashboard.fields.participants + "..."}
-                                    className="bg-background border border-border rounded px-2 py-0.5 text-xs w-full focus:ring-1 focus:ring-primary outline-none"
+                                    className="bg-background border border-border rounded px-2 py-0 h-6 text-xs w-full focus:ring-1 focus:ring-primary outline-none"
                                 />
                             ) : (
-                                <span className="truncate">
+                                <span className="truncate leading-none pt-0.5">
                                     {destination.participants?.length ? destination.participants.join(", ") : dict.dashboard.fields.addPeople}
                                 </span>
                             )}

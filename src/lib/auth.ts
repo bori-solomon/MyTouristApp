@@ -1,7 +1,15 @@
 import NextAuth from 'next-auth';
 import Google from 'next-auth/providers/google';
 
+console.log("DEBUG AUTH ENV:", {
+    NEXTAUTH_URL: process.env.NEXTAUTH_URL,
+    AUTH_URL: process.env.AUTH_URL,
+    TRUST_HOST: process.env.AUTH_TRUST_HOST,
+    VERCEL_URL: process.env.VERCEL_URL
+});
+
 export const { handlers, signIn, signOut, auth } = NextAuth({
+    trustHost: true,
     providers: [
         Google({
             clientId: process.env.GOOGLE_CLIENT_ID!,

@@ -1,36 +1,49 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# My Tourist App
+
+A personal travel management application integrated with Google Drive.
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+-   Node.js (v18 or higher recommended)
+-   npm (comes with Node.js)
+-   Google Cloud Project with the Drive API enabled
+
+### Installation
+
+1.  Clone the repository or open the project folder.
+2.  Install dependencies:
+
+```powershell
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Configuration
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Ensure you have a `.env.local` file in the root directory with your Google OAuth credentials:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```env
+GOOGLE_CLIENT_ID=your_client_id
+GOOGLE_CLIENT_SECRET=your_client_secret
+NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_SECRET=your_nextauth_secret
+GOOGLE_DRIVE_ROOT_FOLDER=My Tourist App
+```
 
-## Learn More
+### Running the App
 
-To learn more about Next.js, take a look at the following resources:
+To start the development server:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```powershell
+npm run dev
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Then open [http://localhost:3000](http://localhost:3000) with your browser.
 
-## Deploy on Vercel
+## Features
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+-   **Google Drive Integration**: All destination folders and files are synced with your Drive.
+-   **Trip Planning**: Create detailed itineraries with dates, locations, notes, and links.
+-   **Document Management**: Organize visa docs, tickets, and bookings.
+-   **Multi-language Support**: Available in English, Russian, Ukrainian, and Japanese.

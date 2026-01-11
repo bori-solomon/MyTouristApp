@@ -81,10 +81,7 @@ export function DashboardView({ initialDestinations }: DashboardViewProps) {
         <div className="space-y-6">
             <div className="flex items-center justify-between mb-2">
                 <div>
-                    <h1 className="text-4xl font-bold mb-2 tracking-tight">{dict.dashboard.title}</h1>
-                    <p className="text-muted-foreground text-lg">
-                        {dict.dashboard.subtitle}
-                    </p>
+                    <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">{dict.dashboard.title}</h1>
                 </div>
                 <button
                     onClick={handleNewTrip}
