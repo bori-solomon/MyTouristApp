@@ -18,6 +18,11 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "My Tourist App",
   description: "Plan and organize your trips",
+  icons: {
+    icon: "/app-icon.png",
+    apple: "/app-icon.png",
+  },
+  manifest: "/manifest.json",
 };
 
 export default function RootLayout({
