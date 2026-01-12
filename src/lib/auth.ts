@@ -1,13 +1,6 @@
 import NextAuth from 'next-auth';
 import Google from 'next-auth/providers/google';
 
-console.log("DEBUG AUTH ENV:", {
-    NEXTAUTH_URL: process.env.NEXTAUTH_URL,
-    AUTH_URL: process.env.AUTH_URL,
-    TRUST_HOST: process.env.AUTH_TRUST_HOST,
-    VERCEL_URL: process.env.VERCEL_URL
-});
-
 const secret = process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET;
 
 if (!secret) {
@@ -55,6 +48,17 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     },
     pages: {
         signIn: '/',
+    },
+    cookies: {
+        pkceCodeVerifier: {
+            name: 'next-auth.pkce.code_verifier',
+            options: {
+                httpOnly: true,
+                sameSite: 'lax',
+                path: '/',
+                secure: process.env.NODE_ENV === 'production',
+            },
+        },
     },
 });
 

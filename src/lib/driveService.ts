@@ -105,7 +105,7 @@ export async function getDestination(id: string): Promise<Destination | null> {
 
     const client = await getDriveClient();
     if (!client) {
-        throw new Error("Not authenticated");
+        return null;
     }
 
     const { drive } = client;
