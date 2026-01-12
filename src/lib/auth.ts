@@ -8,8 +8,15 @@ console.log("DEBUG AUTH ENV:", {
     VERCEL_URL: process.env.VERCEL_URL
 });
 
+const secret = process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET;
+
+if (!secret) {
+    console.error("❌ CRITICAL: No secret found for NextAuth. Please set AUTH_SECRET or NEXTAUTH_SECRET.");
+}
+
 export const { handlers, signIn, signOut, auth } = NextAuth({
     trustHost: true,
+    secret: secret,
     providers: [
         Google({
             clientId: process.env.GOOGLE_CLIENT_ID!,
@@ -49,7 +56,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     pages: {
         signIn: '/',
     },
-    secret: process.env.NEXTAUTH_SECRET,
 });
 
 /**
