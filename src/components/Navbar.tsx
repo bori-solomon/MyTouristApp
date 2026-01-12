@@ -66,8 +66,10 @@ export function Navbar() {
                     )}
                 </div>
 
-                {/* Mobile Menu (3 Dots) */}
-                <div className="sm:hidden flex items-center">
+                {/* Mobile Menu & Quick Actions */}
+                <div className="sm:hidden flex items-center gap-2">
+                    <AuthStatusAwareSignIn />
+
                     <button
                         onClick={() => setIsOpen(!isOpen)}
                         className="p-2 -mr-2 text-muted-foreground hover:text-foreground"
@@ -79,7 +81,7 @@ export function Navbar() {
                         <>
                             <div className="absolute right-4 top-16 w-64 bg-popover border border-border rounded-xl shadow-xl py-2 z-50 animate-in fade-in zoom-in-95 duration-100 flex flex-col gap-1 p-2">
                                 {/* Mobile Auth & User Info */}
-                                <MobileAuthMenu />
+                                <MobileAuthMenu ignoreSignIn />
 
                                 <div className="h-px bg-border my-1" />
 
@@ -113,7 +115,23 @@ export function Navbar() {
     );
 }
 
-function MobileAuthMenu() {
+function AuthStatusAwareSignIn() {
+    const { status } = useSession();
+
+    if (status !== "unauthenticated") return null;
+
+    return (
+        <button
+            onClick={() => signIn("google")}
+            className="flex items-center gap-2 bg-primary text-primary-foreground px-3 py-1.5 rounded-lg text-sm font-medium shadow-sm active:scale-95 transition-all"
+        >
+            <LogIn className="w-4 h-4" />
+            <span>Sign In</span>
+        </button>
+    );
+}
+
+function MobileAuthMenu({ ignoreSignIn }: { ignoreSignIn?: boolean }) {
     const { data: session, status } = useSession();
 
     if (status === "loading") {
@@ -147,6 +165,8 @@ function MobileAuthMenu() {
             </>
         );
     }
+
+    if (ignoreSignIn) return null;
 
     return (
         <button
