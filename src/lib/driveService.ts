@@ -53,21 +53,19 @@ export async function getDestinations(): Promise<Destination[]> {
             fields: 'files(id, name, createdTime)',
         });
 
-        const destinations: Destination[] = [];
-
-        for (const folder of response.data.files || []) {
+        const destinations = await Promise.all((response.data.files || []).map(async (folder: any) => {
             try {
                 const metadata = await loadDestinationMetadata(drive, folder.id);
 
                 if (metadata) {
-                    destinations.push({
+                    return {
                         ...metadata,
                         id: folder.id,
                         name: folder.name,
-                    });
+                    };
                 } else {
                     // Create default structure if metadata doesn't exist
-                    const dest: Destination = {
+                    return {
                         id: folder.id,
                         name: folder.name,
                         attractions: [],
@@ -77,13 +75,23 @@ export async function getDestinations(): Promise<Destination[]> {
                         dueDate: "",
                         participants: [],
                         plan: [],
-                    };
-                    destinations.push(dest);
+                    } as Destination;
                 }
             } catch (metadataError) {
                 console.error(`Error loading metadata for folder ${folder.name}:`, metadataError);
+                return {
+                    id: folder.id,
+                    name: folder.name,
+                    attractions: [],
+                    categories: [],
+                    createdTime: folder.createdTime,
+                    travelDate: "",
+                    dueDate: "",
+                    participants: [],
+                    plan: [],
+                } as Destination;
             }
-        }
+        }));
 
         return destinations;
     } catch (error: any) {
