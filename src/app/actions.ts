@@ -8,9 +8,9 @@ export async function addNewCategory(destId: string, name: string) {
         await createCategory(destId, name);
         revalidatePath(`/destination/${destId}`);
         return { success: true };
-    } catch (error) {
+    } catch (error: any) {
         console.error("Failed to add category:", error);
-        return { success: false, error: "Failed to add category" };
+        return { success: false, error: error.message || "Failed to add category" };
     }
 }
 
@@ -19,9 +19,9 @@ export async function addNewAttraction(destId: string, name: string) {
         await addAttraction(destId, name);
         revalidatePath(`/destination/${destId}`);
         return { success: true };
-    } catch (error) {
+    } catch (error: any) {
         console.error("Failed to add attraction:", error);
-        return { success: false, error: "Failed to add attraction" };
+        return { success: false, error: error.message || "Failed to add attraction" };
     }
 }
 
@@ -30,9 +30,9 @@ export async function deleteAttraction(destId: string, attrId: string) {
         await removeAttraction(destId, attrId);
         revalidatePath(`/destination/${destId}`);
         return { success: true };
-    } catch (error) {
+    } catch (error: any) {
         console.error("Failed to delete attraction:", error);
-        return { success: false, error: "Failed to delete attraction" };
+        return { success: false, error: error.message || "Failed to delete attraction" };
     }
 }
 
@@ -44,9 +44,9 @@ export async function uploadFileAction(destId: string, categoryId: string, formD
         await uploadFile(destId, categoryId, file);
         revalidatePath(`/destination/${destId}`);
         return { success: true };
-    } catch (error) {
+    } catch (error: any) {
         console.error("Failed to upload file:", error);
-        return { success: false, error: "Failed to upload file" };
+        return { success: false, error: error.message || "Failed to upload file" };
     }
 }
 
@@ -58,9 +58,9 @@ export async function updateDestinationAction(destId: string, updates: any) {
         revalidatePath("/");
         revalidatePath(`/destination/${destId}`);
         return { success: true };
-    } catch (error) {
+    } catch (error: any) {
         console.error("Failed to update destination:", error);
-        return { success: false, error: "Failed to update destination" };
+        return { success: false, error: error.message || "Failed to update destination" };
     }
 }
 
@@ -69,9 +69,9 @@ export async function deleteFileAction(destId: string, categoryId: string, fileI
         await deleteFile(destId, categoryId, fileId);
         revalidatePath(`/destination/${destId}`);
         return { success: true };
-    } catch (error) {
+    } catch (error: any) {
         console.error("Failed to delete file:", error);
-        return { success: false, error: "Failed to delete file" };
+        return { success: false, error: error.message || "Failed to delete file" };
     }
 }
 
@@ -80,9 +80,9 @@ export async function createDestinationAction(name: string) {
         const newDest = await createDestination(name);
         revalidatePath("/");
         return { success: true, destinationId: newDest.id };
-    } catch (error) {
+    } catch (error: any) {
         console.error("Failed to create destination:", error);
-        return { success: false, error: "Failed to create destination" };
+        return { success: false, error: error.message || "Failed to create destination" };
     }
 }
 
@@ -91,9 +91,9 @@ export async function renameFileAction(destId: string, categoryId: string, fileI
         await renameFile(destId, categoryId, fileId, newName);
         revalidatePath(`/destination/${destId}`);
         return { success: true };
-    } catch (error) {
+    } catch (error: any) {
         console.error("Failed to rename file:", error);
-        return { success: false, error: "Failed to rename file" };
+        return { success: false, error: error.message || "Failed to rename file" };
     }
 }
 
@@ -102,8 +102,8 @@ export async function updatePlanAction(destId: string, plan: any[]) {
         await updatePlan(destId, plan);
         revalidatePath(`/destination/${destId}`);
         return { success: true };
-    } catch (error) {
+    } catch (error: any) {
         console.error("Failed to update plan:", error);
-        return { success: false, error: "Failed to update plan" };
+        return { success: false, error: error.message || "Failed to update plan" };
     }
 }

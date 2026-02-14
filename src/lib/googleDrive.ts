@@ -12,14 +12,20 @@ export interface GoogleDriveClient {
 export async function getDriveClient(): Promise<GoogleDriveClient | null> {
     const session = await auth();
 
-    if (!session || !session.accessToken) {
+    if (!session) {
+        console.warn("getDriveClient: No session found");
+        return null;
+    }
+
+    if (!session.accessToken) {
+        console.warn("getDriveClient: session exists but no accessToken found");
         return null;
     }
 
     const oauth2Client = new google.auth.OAuth2(
         process.env.GOOGLE_CLIENT_ID,
         process.env.GOOGLE_CLIENT_SECRET,
-        process.env.GOOGLE_REDIRECT_URI
+        process.env.GOOGLE_REDIRECT_URI || undefined
     );
 
     oauth2Client.setCredentials({

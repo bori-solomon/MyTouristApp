@@ -214,43 +214,51 @@ export async function createDestination(name: string): Promise<Destination> {
         return newDest;
     }
 
-    const client = await getDriveClient();
-    if (!client) {
-        throw new Error("Not authenticated");
+    try {
+        const client = await getDriveClient();
+        if (!client) {
+            throw new Error("Not authenticated");
+        }
+
+        const { drive } = client;
+        const rootFolderId = await findOrCreateRootFolder(drive);
+        const destFolderId = await findOrCreateDestinationFolder(drive, rootFolderId, name);
+
+        // Create default categories
+        const defaultCategories = ["Visa/Docs", "Air Tickets", "Hotels", "Transport"];
+        const categories: Category[] = [];
+
+        for (const catName of defaultCategories) {
+            const catFolderId = await findOrCreateCategoryFolder(drive, destFolderId, catName);
+            categories.push({
+                id: catFolderId,
+                name: catName,
+                files: [],
+            });
+        }
+
+        const newDest: Destination = {
+            id: destFolderId,
+            name,
+            attractions: [],
+            categories,
+            createdTime: new Date().toISOString(),
+            travelDate: "",
+            dueDate: "",
+            participants: [],
+            plan: [],
+        };
+
+        await saveDestinationMetadata(drive, destFolderId, newDest);
+
+        return newDest;
+    } catch (error: any) {
+        console.error("FATAL ERROR in createDestination:", error.message || error);
+        if (error.response?.data) {
+            console.error("Detailed API Error:", JSON.stringify(error.response.data, null, 2));
+        }
+        throw new Error(`Failed to create destination: ${error.message || "Unknown error"}`);
     }
-
-    const { drive } = client;
-    const rootFolderId = await findOrCreateRootFolder(drive);
-    const destFolderId = await findOrCreateDestinationFolder(drive, rootFolderId, name);
-
-    // Create default categories
-    const defaultCategories = ["Visa/Docs", "Air Tickets", "Hotels", "Transport"];
-    const categories: Category[] = [];
-
-    for (const catName of defaultCategories) {
-        const catFolderId = await findOrCreateCategoryFolder(drive, destFolderId, catName);
-        categories.push({
-            id: catFolderId,
-            name: catName,
-            files: [],
-        });
-    }
-
-    const newDest: Destination = {
-        id: destFolderId,
-        name,
-        attractions: [],
-        categories,
-        createdTime: new Date().toISOString(),
-        travelDate: "",
-        dueDate: "",
-        participants: [],
-        plan: [],
-    };
-
-    await saveDestinationMetadata(drive, destFolderId, newDest);
-
-    return newDest;
 }
 
 export async function createCategory(destId: string, categoryName: string): Promise<Category> {
