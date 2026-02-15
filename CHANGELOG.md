@@ -1,0 +1,16 @@
+# Changelog
+
+All notable changes to this project will be documented in this file.
+
+## [v1.1] - 2026-02-15
+
+### Added
+- **Editable Trip Details**: Added ability to edit "From Date", "To Date", and "People" directly on the trip page.
+- **Performance Improvements**: Optimized dashboard loading with parallel data fetching.
+- **Loading States**: Added "Loading..." indicators for better user experience during navigation.
+- **Version Display**: Added version number to the top navigation bar.
+
+### Fixed
+- Fixed "stuck" navigation when going back to the dashboard.
+- Fixed 502 Bad Gateway error by updating local environment configuration.
+- Improved error handling and logging for Google Drive API interactions.
