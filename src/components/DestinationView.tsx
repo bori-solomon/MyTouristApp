@@ -2,13 +2,24 @@
 
 import { Destination, DriveFile } from "@/types";
 import { useState } from "react";
-import { FileText, Image as ImageIcon, Plus, ExternalLink, Loader2, Trash2, LayoutGrid, List, Edit2, X } from "lucide-react";
+import { FileText, Image as ImageIcon, Plus, ExternalLink, Loader2, Trash2, LayoutGrid, List, Edit2, X, Check, ArrowLeft, Calendar, Clock, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { FileUploader } from "./FileUploader";
 import { AttractionList } from "./AttractionList";
 import { TripPlanView } from "./TripPlanView";
-import { addNewAttraction, addNewCategory, deleteAttraction, uploadFileAction, deleteFileAction, renameFileAction } from "@/app/actions";
+import {
+    addNewAttraction,
+    addNewCategory,
+    deleteAttraction,
+    uploadFileAction,
+    deleteFileAction,
+    renameFileAction,
+    updateDestinationAction
+} from "@/app/actions";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { format, isFuture } from "date-fns";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 interface DestinationViewProps {
     destination: Destination;
@@ -16,6 +27,7 @@ interface DestinationViewProps {
 
 export function DestinationView({ destination }: DestinationViewProps) {
     const { dict } = useLanguage();
+    const router = useRouter();
 
     // Find initial category based on visual order: Plan -> Visa/Docs -> Air Tickets -> Hotels -> Transport -> Attractions
     const getInitialCategory = () => {
@@ -34,7 +46,36 @@ export function DestinationView({ destination }: DestinationViewProps) {
     const [isUploading, setIsUploading] = useState(false);
     const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
+    // Edit Mode State
+    const [isEditing, setIsEditing] = useState(false);
+    const [editForm, setEditForm] = useState({
+        travelDate: destination.travelDate || "",
+        dueDate: destination.dueDate || "",
+        participants: destination.participants?.join(", ") || "",
+    });
+    const [isSaving, setIsSaving] = useState(false);
+
     const activeCategory = destination.categories.find(c => c.id === activeCategoryId);
+    const isUpcoming = destination.travelDate ? isFuture(new Date(destination.travelDate)) : false;
+
+    const handleSaveDetails = async () => {
+        setIsSaving(true);
+        const updates = {
+            travelDate: editForm.travelDate,
+            dueDate: editForm.dueDate,
+            participants: editForm.participants.split(",").map(p => p.trim()).filter(Boolean),
+        };
+
+        const result = await updateDestinationAction(destination.id, updates);
+        setIsSaving(false);
+
+        if (result.success) {
+            setIsEditing(false);
+            router.refresh();
+        } else {
+            alert("Failed to update trip details.");
+        }
+    };
 
     const handleAddCategory = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -86,7 +127,128 @@ export function DestinationView({ destination }: DestinationViewProps) {
     };
 
     return (
-        <div className="space-y-4 sm:space-y-6">
+        <div className="space-y-6">
+            {/* Header Section */}
+            <div className="mb-8">
+                <Link
+                    href="/"
+                    className="inline-flex items-center gap-2 px-4 py-3 rounded-xl bg-muted/30 hover:bg-muted text-foreground hover:text-primary transition-all mb-6 font-medium active:scale-95"
+                >
+                    <ArrowLeft className="w-4 h-4" />
+                    Back to Dashboard
+                </Link>
+
+                <div className="relative rounded-3xl overflow-hidden bg-card border border-border min-h-[200px] aspect-auto sm:aspect-[5/1] flex items-end p-6 sm:p-8">
+                    <div className="absolute inset-0 bg-gradient-to-r from-primary/20 via-background to-background" />
+                    <div className="relative z-10 w-full">
+                        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
+                            <div>
+                                <h1 className={`text-3xl sm:text-5xl font-bold tracking-tight mb-2 ${isUpcoming ? "text-yellow-400" : ""}`}>
+                                    {destination.name}
+                                </h1>
+                                <p className="text-muted-foreground text-sm sm:text-lg">
+                                    Plan and organize your trip details
+                                </p>
+                            </div>
+
+                            <div className="flex flex-col items-end gap-2">
+                                <button
+                                    onClick={() => isEditing ? handleSaveDetails() : setIsEditing(true)}
+                                    disabled={isSaving}
+                                    className={cn(
+                                        "flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors",
+                                        isEditing
+                                            ? "bg-primary text-primary-foreground hover:bg-primary/90"
+                                            : "bg-background/40 backdrop-blur-sm border border-border/50 hover:bg-background/60"
+                                    )}
+                                >
+                                    {isSaving ? (
+                                        <Loader2 className="w-4 h-4 animate-spin" />
+                                    ) : isEditing ? (
+                                        <>
+                                            <Check className="w-4 h-4" /> Save
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Edit2 className="w-4 h-4" /> Edit Details
+                                        </>
+                                    )}
+                                </button>
+
+                                <div className="flex flex-wrap items-center justify-end gap-4 bg-background/40 backdrop-blur-sm p-4 rounded-2xl border border-border/50">
+                                    {isEditing ? (
+                                        <div className="flex flex-col sm:flex-row gap-4 items-end">
+                                            <div className="flex flex-col gap-1">
+                                                <label className="text-xs font-semibold text-muted-foreground uppercase">From</label>
+                                                <input
+                                                    type="date"
+                                                    value={editForm.travelDate}
+                                                    onChange={e => setEditForm(prev => ({ ...prev, travelDate: e.target.value }))}
+                                                    className="bg-background/80 border border-border rounded-md px-2 py-1 text-sm w-36"
+                                                />
+                                            </div>
+                                            <div className="flex flex-col gap-1">
+                                                <label className="text-xs font-semibold text-muted-foreground uppercase">To</label>
+                                                <input
+                                                    type="date"
+                                                    value={editForm.dueDate}
+                                                    onChange={e => setEditForm(prev => ({ ...prev, dueDate: e.target.value }))}
+                                                    className="bg-background/80 border border-border rounded-md px-2 py-1 text-sm w-36"
+                                                />
+                                            </div>
+                                            <div className="flex flex-col gap-1">
+                                                <label className="text-xs font-semibold text-muted-foreground uppercase">People</label>
+                                                <input
+                                                    type="text"
+                                                    placeholder="John, Jane..."
+                                                    value={editForm.participants}
+                                                    onChange={e => setEditForm(prev => ({ ...prev, participants: e.target.value }))}
+                                                    className="bg-background/80 border border-border rounded-md px-2 py-1 text-sm w-48"
+                                                />
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <>
+                                            {(destination.travelDate || destination.dueDate) ? (
+                                                <div className="flex items-center gap-4">
+                                                    {destination.travelDate && (
+                                                        <div className="flex items-center gap-2 text-sm">
+                                                            <Calendar className="w-4 h-4 text-primary" />
+                                                            <span className="font-medium">{format(new Date(destination.travelDate), "MMM d, yyyy")}</span>
+                                                        </div>
+                                                    )}
+                                                    {destination.dueDate && (
+                                                        <div className="flex items-center gap-2 text-sm">
+                                                            <Clock className="w-4 h-4 text-orange-400" />
+                                                            <span className="font-medium">{format(new Date(destination.dueDate), "MMM d, yyyy")}</span>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            ) : (
+                                                <span className="text-sm text-muted-foreground italic">No dates set</span>
+                                            )}
+
+                                            <div className="w-px h-8 bg-border/50 hidden sm:block" />
+
+                                            {destination.participants && destination.participants.length > 0 ? (
+                                                <div className="flex items-center gap-2 text-sm">
+                                                    <Users className="w-4 h-4 text-blue-400" />
+                                                    <span className="font-medium">{destination.participants.join(", ")}</span>
+                                                </div>
+                                            ) : (
+                                                <span className="text-sm text-muted-foreground italic flex items-center gap-2">
+                                                    <Users className="w-4 h-4" /> No people
+                                                </span>
+                                            )}
+                                        </>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             {/* Tabs */}
             <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide">
                 <button
