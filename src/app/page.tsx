@@ -15,7 +15,7 @@ export default async function Home() {
         <div className="relative rounded-3xl overflow-hidden min-h-[500px] flex items-center justify-center text-center p-8 bg-muted border border-border shadow-xl">
           {/* Background Image with Overlay */}
           <Image
-            src="/landing-bg.jpg"
+            src="/landing-bg.png"
             alt="Travel background"
             fill
             priority

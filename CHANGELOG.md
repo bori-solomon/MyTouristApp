@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v1.2.4] - 2026-02-20
+
+### Changed
+- **UI Reorganization**: Combined trip dates with their respective flight hours (Outbound/Return) in the header for a more intuitive layout.
+
+### Fixed
+- **Landing Page Image**: Corrected file extension to `.png` to fix the missing background image issue.
+
 ## [v1.2.3] - 2026-02-20
 
 ### Fixed

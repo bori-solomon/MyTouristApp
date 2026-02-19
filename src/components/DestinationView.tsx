@@ -187,55 +187,73 @@ export function DestinationView({ destination }: DestinationViewProps) {
                                 <div className="flex flex-wrap items-center justify-end gap-4 bg-background/40 backdrop-blur-sm p-4 rounded-2xl border border-border/50">
                                     {isEditing ? (
                                         <div className="flex flex-col gap-4 w-full">
-                                            <div className="flex flex-col sm:flex-row gap-4 items-end">
-                                                <div className="flex flex-col gap-1">
-                                                    <label className="text-xs font-semibold text-muted-foreground uppercase">From</label>
-                                                    <input
-                                                        type="date"
-                                                        value={editForm.travelDate}
-                                                        onChange={e => setEditForm(prev => ({ ...prev, travelDate: e.target.value }))}
-                                                        className="bg-background/80 border border-border rounded-md px-2 py-1 text-sm w-36"
-                                                    />
+                                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full">
+                                                <div className="space-y-4 p-4 rounded-xl bg-green-500/5 border border-green-500/10">
+                                                    <div className="flex items-center gap-2 mb-1">
+                                                        <Plane className="w-4 h-4 text-green-400" />
+                                                        <span className="text-xs font-bold text-green-400 uppercase tracking-wider">Outbound</span>
+                                                    </div>
+                                                    <div className="grid grid-cols-2 gap-4">
+                                                        <div className="flex flex-col gap-1">
+                                                            <label className="text-[10px] font-semibold text-muted-foreground uppercase">Date</label>
+                                                            <input
+                                                                type="date"
+                                                                value={editForm.travelDate}
+                                                                onChange={e => setEditForm(prev => ({ ...prev, travelDate: e.target.value }))}
+                                                                className="bg-background/80 border border-border rounded-md px-2 py-1 text-sm w-full"
+                                                            />
+                                                        </div>
+                                                        <div className="flex flex-col gap-1">
+                                                            <label className="text-[10px] font-semibold text-muted-foreground uppercase">Flight Time</label>
+                                                            <input
+                                                                type="text"
+                                                                placeholder="10:00-14:30"
+                                                                value={editForm.flightOut}
+                                                                onChange={e => setEditForm(prev => ({ ...prev, flightOut: e.target.value }))}
+                                                                className="bg-background/80 border border-border rounded-md px-2 py-1 text-sm w-full"
+                                                            />
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                                <div className="flex flex-col gap-1">
-                                                    <label className="text-xs font-semibold text-muted-foreground uppercase">To</label>
-                                                    <input
-                                                        type="date"
-                                                        value={editForm.dueDate}
-                                                        onChange={e => setEditForm(prev => ({ ...prev, dueDate: e.target.value }))}
-                                                        className="bg-background/80 border border-border rounded-md px-2 py-1 text-sm w-36"
-                                                    />
+
+                                                <div className="space-y-4 p-4 rounded-xl bg-red-500/5 border border-red-500/10">
+                                                    <div className="flex items-center gap-2 mb-1">
+                                                        <Plane className="w-4 h-4 text-red-400 rotate-180" />
+                                                        <span className="text-xs font-bold text-red-400 uppercase tracking-wider">Return</span>
+                                                    </div>
+                                                    <div className="grid grid-cols-2 gap-4">
+                                                        <div className="flex flex-col gap-1">
+                                                            <label className="text-[10px] font-semibold text-muted-foreground uppercase">Date</label>
+                                                            <input
+                                                                type="date"
+                                                                value={editForm.dueDate}
+                                                                onChange={e => setEditForm(prev => ({ ...prev, dueDate: e.target.value }))}
+                                                                className="bg-background/80 border border-border rounded-md px-2 py-1 text-sm w-full"
+                                                            />
+                                                        </div>
+                                                        <div className="flex flex-col gap-1">
+                                                            <label className="text-[10px] font-semibold text-muted-foreground uppercase">Flight Time</label>
+                                                            <input
+                                                                type="text"
+                                                                placeholder="16:00-20:15"
+                                                                value={editForm.flightReturn}
+                                                                onChange={e => setEditForm(prev => ({ ...prev, flightReturn: e.target.value }))}
+                                                                className="bg-background/80 border border-border rounded-md px-2 py-1 text-sm w-full"
+                                                            />
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                                <div className="flex flex-col gap-1">
-                                                    <label className="text-xs font-semibold text-muted-foreground uppercase">People</label>
+                                            </div>
+
+                                            <div className="flex flex-col sm:flex-row gap-4 w-full">
+                                                <div className="flex flex-col gap-1 flex-1">
+                                                    <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">People</label>
                                                     <input
                                                         type="text"
                                                         placeholder="John, Jane..."
                                                         value={editForm.participants}
                                                         onChange={e => setEditForm(prev => ({ ...prev, participants: e.target.value }))}
-                                                        className="bg-background/80 border border-border rounded-md px-2 py-1 text-sm w-48"
-                                                    />
-                                                </div>
-                                            </div>
-                                            <div className="flex flex-col sm:flex-row gap-4 items-end">
-                                                <div className="flex flex-col gap-1">
-                                                    <label className="text-xs font-semibold text-muted-foreground uppercase">✈ Outbound Flight</label>
-                                                    <input
-                                                        type="text"
-                                                        placeholder="10:00-14:30"
-                                                        value={editForm.flightOut}
-                                                        onChange={e => setEditForm(prev => ({ ...prev, flightOut: e.target.value }))}
-                                                        className="bg-background/80 border border-border rounded-md px-2 py-1 text-sm w-36"
-                                                    />
-                                                </div>
-                                                <div className="flex flex-col gap-1">
-                                                    <label className="text-xs font-semibold text-muted-foreground uppercase">✈ Return Flight</label>
-                                                    <input
-                                                        type="text"
-                                                        placeholder="16:00-20:15"
-                                                        value={editForm.flightReturn}
-                                                        onChange={e => setEditForm(prev => ({ ...prev, flightReturn: e.target.value }))}
-                                                        className="bg-background/80 border border-border rounded-md px-2 py-1 text-sm w-36"
+                                                        className="bg-background/80 border border-border rounded-md px-3 py-2 text-sm w-full shadow-sm"
                                                     />
                                                 </div>
                                             </div>
@@ -252,67 +270,70 @@ export function DestinationView({ destination }: DestinationViewProps) {
                                         </div>
                                     ) : (
                                         <>
-                                            {(destination.travelDate || destination.dueDate) ? (
-                                                <div className="flex items-center gap-4">
-                                                    {destination.travelDate && (
-                                                        <div className="flex items-center gap-2 text-sm">
-                                                            <Calendar className="w-4 h-4 text-primary" />
-                                                            <span className="font-medium">{format(new Date(destination.travelDate), "MMM d, yyyy")}</span>
+                                            <div className="flex flex-wrap items-center gap-4">
+                                                <div className="flex items-center gap-4 py-1.5 px-3 rounded-xl bg-green-500/10 border border-green-500/20 shadow-sm">
+                                                    <Plane className="w-4 h-4 text-green-400" />
+                                                    <div className="flex flex-col">
+                                                        <span className="text-[10px] font-bold text-green-400/80 uppercase leading-none mb-1">Outbound</span>
+                                                        <div className="flex items-center gap-2">
+                                                            {destination.travelDate ? (
+                                                                <span className="font-semibold text-sm">{format(new Date(destination.travelDate), "MMM d")}</span>
+                                                            ) : (
+                                                                <span className="text-xs text-muted-foreground italic">No date</span>
+                                                            )}
+                                                            {destination.flightOut && (
+                                                                <span className="text-xs font-medium text-foreground/80 bg-background/50 px-1.5 py-0.5 rounded shadow-inner">{destination.flightOut}</span>
+                                                            )}
                                                         </div>
-                                                    )}
-                                                    {destination.dueDate && (
-                                                        <div className="flex items-center gap-2 text-sm">
-                                                            <Clock className="w-4 h-4 text-orange-400" />
-                                                            <span className="font-medium">{format(new Date(destination.dueDate), "MMM d, yyyy")}</span>
+                                                    </div>
+                                                </div>
+
+                                                <div className="flex items-center gap-4 py-1.5 px-3 rounded-xl bg-red-500/10 border border-red-500/20 shadow-sm">
+                                                    <Plane className="w-4 h-4 text-red-400 rotate-180" />
+                                                    <div className="flex flex-col">
+                                                        <span className="text-[10px] font-bold text-red-400/80 uppercase leading-none mb-1">Return</span>
+                                                        <div className="flex items-center gap-2">
+                                                            {destination.dueDate ? (
+                                                                <span className="font-semibold text-sm">{format(new Date(destination.dueDate), "MMM d")}</span>
+                                                            ) : (
+                                                                <span className="text-xs text-muted-foreground italic">No date</span>
+                                                            )}
+                                                            {destination.flightReturn && (
+                                                                <span className="text-xs font-medium text-foreground/80 bg-background/50 px-1.5 py-0.5 rounded shadow-inner">{destination.flightReturn}</span>
+                                                            )}
                                                         </div>
-                                                    )}
-                                                </div>
-                                            ) : (
-                                                <span className="text-sm text-muted-foreground italic">No dates set</span>
-                                            )}
-
-                                            <div className="w-px h-8 bg-border/50 hidden sm:block" />
-
-                                            {destination.participants && destination.participants.length > 0 ? (
-                                                <div className="flex items-center gap-2 text-sm">
-                                                    <Users className="w-4 h-4 text-blue-400" />
-                                                    <span className="font-medium">{destination.participants.join(", ")}</span>
-                                                </div>
-                                            ) : (
-                                                <span className="text-sm text-muted-foreground italic flex items-center gap-2">
-                                                    <Users className="w-4 h-4" /> No people
-                                                </span>
-                                            )}
-
-                                            {(destination.flightOut || destination.flightReturn) && (
-                                                <>
-                                                    <div className="w-px h-8 bg-border/50 hidden sm:block" />
-                                                    <div className="flex items-center gap-3">
-                                                        {destination.flightOut && (
-                                                            <div className="flex items-center gap-1.5 text-sm">
-                                                                <Plane className="w-4 h-4 text-green-400" />
-                                                                <span className="font-medium">{destination.flightOut}</span>
-                                                            </div>
-                                                        )}
-                                                        {destination.flightReturn && (
-                                                            <div className="flex items-center gap-1.5 text-sm">
-                                                                <Plane className="w-4 h-4 text-red-400 rotate-180" />
-                                                                <span className="font-medium">{destination.flightReturn}</span>
-                                                            </div>
-                                                        )}
                                                     </div>
-                                                </>
-                                            )}
+                                                </div>
 
-                                            {destination.comment && (
-                                                <>
-                                                    <div className="w-px h-8 bg-border/50 hidden sm:block" />
-                                                    <div className="flex items-center gap-2 text-sm max-w-xs">
-                                                        <MessageSquare className="w-4 h-4 text-violet-400 flex-shrink-0" />
-                                                        <span className="font-medium truncate">{destination.comment}</span>
+                                                <div className="w-px h-10 bg-border/40 mx-1 hidden sm:block" />
+
+                                                {destination.participants && destination.participants.length > 0 ? (
+                                                    <div className="flex flex-col gap-1">
+                                                        <span className="text-[10px] font-bold text-blue-400/80 uppercase leading-none">People</span>
+                                                        <div className="flex items-center gap-2 text-sm">
+                                                            <Users className="w-4 h-4 text-blue-400" />
+                                                            <span className="font-medium">{destination.participants.join(", ")}</span>
+                                                        </div>
                                                     </div>
-                                                </>
-                                            )}
+                                                ) : (
+                                                    <span className="text-sm text-muted-foreground italic flex items-center gap-2">
+                                                        <Users className="w-4 h-4" /> No people
+                                                    </span>
+                                                )}
+
+                                                {destination.comment && (
+                                                    <>
+                                                        <div className="w-px h-10 bg-border/40 mx-1 hidden sm:block" />
+                                                        <div className="flex flex-col gap-1 max-w-[200px]">
+                                                            <span className="text-[10px] font-bold text-violet-400/80 uppercase leading-none">Notes</span>
+                                                            <div className="flex items-center gap-2 text-sm">
+                                                                <MessageSquare className="w-4 h-4 text-violet-400 flex-shrink-0" />
+                                                                <span className="font-medium truncate">{destination.comment}</span>
+                                                            </div>
+                                                        </div>
+                                                    </>
+                                                )}
+                                            </div>
                                         </>
                                     )}
                                 </div>
