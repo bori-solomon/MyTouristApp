@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v1.2.2] - 2026-02-20
+
+### Fixed
+- **Landing Page Image**: Refactored the landing page to use `next/image` for more reliable background image loading and added a fallback theme-aware background color.
+
 ## [v1.2.1] - 2026-02-20
 
 ### Fixed

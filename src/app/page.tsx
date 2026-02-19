@@ -1,6 +1,7 @@
 import { DashboardView } from "@/components/DashboardView";
 import { getDestinations } from "@/lib/driveService";
 import { auth } from "@/lib/auth";
+import Image from "next/image";
 
 export default async function Home() {
   const session = await auth();
@@ -11,11 +12,14 @@ export default async function Home() {
       {session ? (
         <DashboardView initialDestinations={destinations} />
       ) : (
-        <div className="relative rounded-3xl overflow-hidden min-h-[500px] flex items-center justify-center text-center p-8 bg-card border border-border shadow-xl">
+        <div className="relative rounded-3xl overflow-hidden min-h-[500px] flex items-center justify-center text-center p-8 bg-muted border border-border shadow-xl">
           {/* Background Image with Overlay */}
-          <div
-            className="absolute inset-0 bg-cover bg-center transition-transform hover:scale-105 duration-700"
-            style={{ backgroundImage: "url('/landing-bg.jpg')" }}
+          <Image
+            src="/landing-bg.jpg"
+            alt="Travel background"
+            fill
+            priority
+            className="object-cover transition-transform hover:scale-105 duration-700"
           />
           <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/40 to-black/60" />
 
