@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v1.2] - 2026-02-20
+
+### Added
+- **Flight Details**: Added flight hours (start-end) for both outbound and return flights.
+- **Trip Comments**: Added an optional comment field for general trip notes.
+
 ## [v1.1] - 2026-02-15
 
 ### Added

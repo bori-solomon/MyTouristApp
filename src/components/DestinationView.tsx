@@ -2,7 +2,7 @@
 
 import { Destination, DriveFile } from "@/types";
 import { useState } from "react";
-import { FileText, Image as ImageIcon, Plus, ExternalLink, Loader2, Trash2, LayoutGrid, List, Edit2, X, Check, ArrowLeft, Calendar, Clock, Users } from "lucide-react";
+import { FileText, Image as ImageIcon, Plus, ExternalLink, Loader2, Trash2, LayoutGrid, List, Edit2, X, Check, ArrowLeft, Calendar, Clock, Users, Plane, MessageSquare } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { FileUploader } from "./FileUploader";
 import { AttractionList } from "./AttractionList";
@@ -52,6 +52,9 @@ export function DestinationView({ destination }: DestinationViewProps) {
         travelDate: destination.travelDate || "",
         dueDate: destination.dueDate || "",
         participants: destination.participants?.join(", ") || "",
+        flightOut: destination.flightOut || "",
+        flightReturn: destination.flightReturn || "",
+        comment: destination.comment || "",
     });
     const [isSaving, setIsSaving] = useState(false);
 
@@ -64,6 +67,9 @@ export function DestinationView({ destination }: DestinationViewProps) {
             travelDate: editForm.travelDate,
             dueDate: editForm.dueDate,
             participants: editForm.participants.split(",").map(p => p.trim()).filter(Boolean),
+            flightOut: editForm.flightOut,
+            flightReturn: editForm.flightReturn,
+            comment: editForm.comment,
         };
 
         const result = await updateDestinationAction(destination.id, updates);
@@ -177,33 +183,67 @@ export function DestinationView({ destination }: DestinationViewProps) {
 
                                 <div className="flex flex-wrap items-center justify-end gap-4 bg-background/40 backdrop-blur-sm p-4 rounded-2xl border border-border/50">
                                     {isEditing ? (
-                                        <div className="flex flex-col sm:flex-row gap-4 items-end">
-                                            <div className="flex flex-col gap-1">
-                                                <label className="text-xs font-semibold text-muted-foreground uppercase">From</label>
-                                                <input
-                                                    type="date"
-                                                    value={editForm.travelDate}
-                                                    onChange={e => setEditForm(prev => ({ ...prev, travelDate: e.target.value }))}
-                                                    className="bg-background/80 border border-border rounded-md px-2 py-1 text-sm w-36"
-                                                />
+                                        <div className="flex flex-col gap-4 w-full">
+                                            <div className="flex flex-col sm:flex-row gap-4 items-end">
+                                                <div className="flex flex-col gap-1">
+                                                    <label className="text-xs font-semibold text-muted-foreground uppercase">From</label>
+                                                    <input
+                                                        type="date"
+                                                        value={editForm.travelDate}
+                                                        onChange={e => setEditForm(prev => ({ ...prev, travelDate: e.target.value }))}
+                                                        className="bg-background/80 border border-border rounded-md px-2 py-1 text-sm w-36"
+                                                    />
+                                                </div>
+                                                <div className="flex flex-col gap-1">
+                                                    <label className="text-xs font-semibold text-muted-foreground uppercase">To</label>
+                                                    <input
+                                                        type="date"
+                                                        value={editForm.dueDate}
+                                                        onChange={e => setEditForm(prev => ({ ...prev, dueDate: e.target.value }))}
+                                                        className="bg-background/80 border border-border rounded-md px-2 py-1 text-sm w-36"
+                                                    />
+                                                </div>
+                                                <div className="flex flex-col gap-1">
+                                                    <label className="text-xs font-semibold text-muted-foreground uppercase">People</label>
+                                                    <input
+                                                        type="text"
+                                                        placeholder="John, Jane..."
+                                                        value={editForm.participants}
+                                                        onChange={e => setEditForm(prev => ({ ...prev, participants: e.target.value }))}
+                                                        className="bg-background/80 border border-border rounded-md px-2 py-1 text-sm w-48"
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="flex flex-col sm:flex-row gap-4 items-end">
+                                                <div className="flex flex-col gap-1">
+                                                    <label className="text-xs font-semibold text-muted-foreground uppercase">✈ Outbound Flight</label>
+                                                    <input
+                                                        type="text"
+                                                        placeholder="10:00-14:30"
+                                                        value={editForm.flightOut}
+                                                        onChange={e => setEditForm(prev => ({ ...prev, flightOut: e.target.value }))}
+                                                        className="bg-background/80 border border-border rounded-md px-2 py-1 text-sm w-36"
+                                                    />
+                                                </div>
+                                                <div className="flex flex-col gap-1">
+                                                    <label className="text-xs font-semibold text-muted-foreground uppercase">✈ Return Flight</label>
+                                                    <input
+                                                        type="text"
+                                                        placeholder="16:00-20:15"
+                                                        value={editForm.flightReturn}
+                                                        onChange={e => setEditForm(prev => ({ ...prev, flightReturn: e.target.value }))}
+                                                        className="bg-background/80 border border-border rounded-md px-2 py-1 text-sm w-36"
+                                                    />
+                                                </div>
                                             </div>
                                             <div className="flex flex-col gap-1">
-                                                <label className="text-xs font-semibold text-muted-foreground uppercase">To</label>
-                                                <input
-                                                    type="date"
-                                                    value={editForm.dueDate}
-                                                    onChange={e => setEditForm(prev => ({ ...prev, dueDate: e.target.value }))}
-                                                    className="bg-background/80 border border-border rounded-md px-2 py-1 text-sm w-36"
-                                                />
-                                            </div>
-                                            <div className="flex flex-col gap-1">
-                                                <label className="text-xs font-semibold text-muted-foreground uppercase">People</label>
-                                                <input
-                                                    type="text"
-                                                    placeholder="John, Jane..."
-                                                    value={editForm.participants}
-                                                    onChange={e => setEditForm(prev => ({ ...prev, participants: e.target.value }))}
-                                                    className="bg-background/80 border border-border rounded-md px-2 py-1 text-sm w-48"
+                                                <label className="text-xs font-semibold text-muted-foreground uppercase">Comment</label>
+                                                <textarea
+                                                    placeholder="Any notes about this trip..."
+                                                    value={editForm.comment}
+                                                    onChange={e => setEditForm(prev => ({ ...prev, comment: e.target.value }))}
+                                                    rows={2}
+                                                    className="bg-background/80 border border-border rounded-md px-2 py-1 text-sm w-full resize-none"
                                                 />
                                             </div>
                                         </div>
@@ -239,6 +279,36 @@ export function DestinationView({ destination }: DestinationViewProps) {
                                                 <span className="text-sm text-muted-foreground italic flex items-center gap-2">
                                                     <Users className="w-4 h-4" /> No people
                                                 </span>
+                                            )}
+
+                                            {(destination.flightOut || destination.flightReturn) && (
+                                                <>
+                                                    <div className="w-px h-8 bg-border/50 hidden sm:block" />
+                                                    <div className="flex items-center gap-3">
+                                                        {destination.flightOut && (
+                                                            <div className="flex items-center gap-1.5 text-sm">
+                                                                <Plane className="w-4 h-4 text-green-400" />
+                                                                <span className="font-medium">{destination.flightOut}</span>
+                                                            </div>
+                                                        )}
+                                                        {destination.flightReturn && (
+                                                            <div className="flex items-center gap-1.5 text-sm">
+                                                                <Plane className="w-4 h-4 text-red-400 rotate-180" />
+                                                                <span className="font-medium">{destination.flightReturn}</span>
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                </>
+                                            )}
+
+                                            {destination.comment && (
+                                                <>
+                                                    <div className="w-px h-8 bg-border/50 hidden sm:block" />
+                                                    <div className="flex items-center gap-2 text-sm max-w-xs">
+                                                        <MessageSquare className="w-4 h-4 text-violet-400 flex-shrink-0" />
+                                                        <span className="font-medium truncate">{destination.comment}</span>
+                                                    </div>
+                                                </>
                                             )}
                                         </>
                                     )}

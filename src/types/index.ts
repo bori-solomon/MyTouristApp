@@ -37,6 +37,9 @@ export interface Destination {
     travelDate?: string; // ISO date string or just date string
     dueDate?: string; // ISO date string or just date string
     participants?: string[]; // List of names
+    flightOut?: string; // Outbound flight hours e.g. "10:00-14:30"
+    flightReturn?: string; // Return flight hours e.g. "16:00-20:15"
+    comment?: string; // Optional trip comment/notes
 }
 
 export interface Category {
