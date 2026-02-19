@@ -74,6 +74,9 @@ export async function getDestinations(): Promise<Destination[]> {
                         travelDate: "",
                         dueDate: "",
                         participants: [],
+                        flightOut: "",
+                        flightReturn: "",
+                        comment: "",
                         plan: [],
                     } as Destination;
                 }
@@ -88,6 +91,9 @@ export async function getDestinations(): Promise<Destination[]> {
                     travelDate: "",
                     dueDate: "",
                     participants: [],
+                    flightOut: "",
+                    flightReturn: "",
+                    comment: "",
                     plan: [],
                 } as Destination;
             }
@@ -160,6 +166,9 @@ export async function getDestination(id: string): Promise<Destination | null> {
             travelDate: metadata?.travelDate || "",
             dueDate: metadata?.dueDate || "",
             participants: metadata?.participants || [],
+            flightOut: metadata?.flightOut || "",
+            flightReturn: metadata?.flightReturn || "",
+            comment: metadata?.comment || "",
         };
     } catch (error) {
         console.error("Error getting destination:", error);
@@ -466,7 +475,10 @@ export async function updatePlan(destId: string, plan: PlanEntry[]): Promise<voi
             travelDate: destination.travelDate,
             dueDate: destination.dueDate,
             participants: destination.participants,
-            plan: destination.plan
+            plan: destination.plan,
+            flightOut: destination.flightOut,
+            flightReturn: destination.flightReturn,
+            comment: destination.comment
         }
     );
 }

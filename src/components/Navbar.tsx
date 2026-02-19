@@ -30,7 +30,7 @@ export function Navbar() {
                     <span className="font-bold text-lg sm:text-xl tracking-tight bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent whitespace-nowrap">
                         {dict.nav.title}
                     </span>
-                    <span className="text-xs font-mono text-muted-foreground bg-muted/50 px-1.5 py-0.5 rounded ml-1">v1.2.2</span>
+                    <span className="text-xs font-mono text-muted-foreground bg-muted/50 px-1.5 py-0.5 rounded ml-1">v1.2.3</span>
                 </Link>
 
                 {/* Desktop Menu */}

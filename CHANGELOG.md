@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v1.2.3] - 2026-02-20
+
+### Fixed
+- **Data Persistence**: Fixed an issue where new trip fields (Flight Hours, Comments) were not being saved or loaded correctly.
+- **Landing Page Image**: Updated the landing page background with a high-quality user-provided image.
+
 ## [v1.2.2] - 2026-02-20
 
 ### Fixed
