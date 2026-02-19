@@ -144,7 +144,10 @@ export function DestinationView({ destination }: DestinationViewProps) {
                     Back to Dashboard
                 </Link>
 
-                <div className="relative rounded-3xl overflow-hidden bg-card border border-border min-h-[200px] aspect-auto sm:aspect-[5/1] flex items-end p-6 sm:p-8">
+                <div className={cn(
+                    "relative rounded-3xl overflow-hidden bg-card border border-border flex items-end p-6 sm:p-8 transition-all duration-300",
+                    isEditing ? "min-h-[350px]" : "min-h-[200px] aspect-auto sm:aspect-[5/1]"
+                )}>
                     <div className="absolute inset-0 bg-gradient-to-r from-primary/20 via-background to-background" />
                     <div className="relative z-10 w-full">
                         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">

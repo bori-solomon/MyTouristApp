@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v1.2.1] - 2026-02-20
+
+### Fixed
+- **UI Visibility**: Increased trip header window size in edit mode to prevent date labels and "Save" button from being cut off.
+
 ## [v1.2] - 2026-02-20
 
 ### Added
